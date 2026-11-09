@@ -130,7 +130,7 @@ If a secret key has leaked, for example been sent in a chat, create a new one in
 
 The stock goes down through the thank-you page even without this step. But if a customer closes the tab before the thank-you page loads, the order is only counted through the webhook, so connect it before the shop opens for real.
 
-### On the live site (Vercel)
+### On the live site (Vercel) ✔ done in test mode, 9 Nov 2026
 1. Stripe Dashboard → **Developers → Webhooks → Add endpoint**.
 2. Address: `https://luna-shop-ten.vercel.app/api/stripe-webhook`
 3. Choose the events **`checkout.session.completed`** and **`checkout.session.async_payment_succeeded`**.

@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 9 November 2026 – Stripe webhook connected on the live site
+- In Stripe (test mode / sandbox), an event destination **"Luna shop – stock"** sends `checkout.session.completed` and `checkout.session.async_payment_succeeded` to `https://luna-shop-ten.vercel.app/api/stripe-webhook`.
+- Its signing secret was added in Vercel as `STRIPE_WEBHOOK_SECRET` (Production), and the site was redeployed.
+- **Tested on the live site:** a request without Stripe's signature is refused ("Invalid signature"). A real test purchase of 1 *Moth* with the 4242 card, with the thank-you page blocked (as if the customer closed the tab), still lowered the stock from 10 to 9 – only the webhook could have done it. Stripe reports the event as delivered. The stock was reset afterwards.
+
 ### 9 November 2026 – image upload
 - New Supabase Storage bucket `product-images` (`supabase/04-storage.sql`): public to read, only admins may upload, replace and delete. Only JPEG, PNG and WebP up to 5 MB.
 - The product form has an **Upload images** button (`components/ImageUpload.js`). Photos are made at most 1600 pixels and saved as JPEG in the browser first (`lib/resize-image.js`), then sent to `/api/admin/images`, which uploads them with the admin's own login. Previews show which image is used in the shop, with a **Remove** button.
@@ -134,7 +139,9 @@
 - [ ] Check the names, sizes and prices of the 21 guessed prints in Supabase ([04](04-editing-products.md)).
 - [x] Upgrade Next.js to 16.4.5 or later (security holes in 16.4.0).
 - [x] Add the Supabase keys in Vercel.
-- [ ] Connect the Stripe webhook to the live site ([08](08-supabase.md)).
+- [x] Connect the Stripe webhook to the live site, in test mode ([08](08-supabase.md)).
+- [ ] When switching to live mode: create the same webhook in live mode and put its new `whsec_` key in Vercel.
+- [ ] Roll the webhook signing secret (it was sent in a chat): Stripe → the webhook → 🔄, then update Vercel.
 - [ ] Create new Supabase keys (the current ones were sent in a chat) and replace them in `.env.local`.
 - [x] Real email and Instagram in `data/site.js`.
 - [ ] Real About text in `data/site.js`.
