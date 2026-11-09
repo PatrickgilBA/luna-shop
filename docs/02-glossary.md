@@ -50,7 +50,7 @@ A message one service sends to another when something happens. Stripe sends our 
 A service that gives us a database (PostgreSQL) on the internet. We keep the stock there.
 
 **Database / table**
-A place to store data in an organised way, a bit like a spreadsheet. The `inventory` table has one row per print, with its stock number.
+A place to store data in an organised way, a bit like a spreadsheet. The `products` table has one row per print, with its name, price and stock.
 
 **Row Level Security (RLS)**
 Rules in Supabase that decide who may read or change which rows. Ours let visitors *read* the stock, but not change it.

@@ -2,6 +2,19 @@
 
 ## Changelog
 
+### 9 November 2026 – the prints moved to Supabase
+- New table `products` in Supabase with every print: slug, title, size, price, description, images, stock and sort order (`supabase/02-products.sql`). The 24 prints were generated straight from the old `data/products.js`, and the stock was copied over.
+- Row Level Security: everyone may read products, nobody may change them with the public key. The database refuses empty names, prices ≤ 0, negative stock and invalid slugs.
+- `inventory` became a read-only view of `products`, so the live site kept working during the switch. `process_order` now lowers the stock in `products`.
+- `data/products.js`, `lib/inventory.js` and `/api/stock` were removed. The site reads everything through `lib/products.js`; the cart gets the prints through `/api/products`. New prints get their page the first time someone visits it.
+- `supabase/setup.sql` was renamed to `supabase/01-setup.sql`. `docs/08-supabase-stock.md` was renamed to `docs/08-supabase.md`, and `docs/04-editing-products.md` now explains how to edit prints in Supabase.
+- **Tested:**
+  - 72 automatic tests pass; `npm run build` passes.
+  - The public key can read products but not change a price or add a print (Supabase refuses).
+  - Every page works; an unknown print gives 404.
+  - Changing the price of *Moth* to €31.50 in Supabase made Stripe charge exactly 3150 cents.
+  - A real test purchase of 2 *Moth* with the 4242 card lowered the stock in `products` from 10 to 8, and the site showed 8 right away. Everything was reset afterwards.
+
 ### 9 November 2026 – automatic tests and CI
 - 97 automatic tests with Vitest in `tests/` (run with `npm test`): the shop data and landing page grid, the stock in Supabase, the checkout, the thank-you page check and the Stripe webhook. Stripe and Supabase are replaced by fakes in the tests.
 - To check that the tests really catch mistakes, the stock check and the 10-per-print limit were broken on purpose: three tests failed, as they should. Then the code was restored.
@@ -53,7 +66,7 @@
   - The checkout refuses when you want more than are in stock, and when a print is sold out.
   - The webhook refuses messages without a Stripe signature.
   - The whole chain with a real payment page in Stripe's test mode and a signed "paid" message: the stock went from 10 to 9 and showed on the site immediately, and a repeated message was not counted again. Everything was reset afterwards.
-- **Not tested yet:** a purchase where Stripe itself sends the webhook. The thank-you page lowers the stock even without it, see above. It needs the Stripe CLI or the site to be on the internet (see [08](08-supabase-stock.md)).
+- **Not tested yet:** a purchase where Stripe itself sends the webhook. The thank-you page lowers the stock even without it, see above. It needs the Stripe CLI or the site to be on the internet (see [08](08-supabase.md)).
 - **Security:** `npm audit` shows that Next.js 16.4.0 has known serious security holes. 16.4.5 fixes them. Not upgraded yet.
 
 ### 22 October 2026 – new look
@@ -84,10 +97,10 @@
 ## To-do
 
 ### Must be done before the shop opens
-- [ ] Go through every `TODO` in `data/products.js`: name, size and price. The right stock is set in Supabase.
+- [ ] Check the names, sizes and prices of the 21 guessed prints in Supabase ([04](04-editing-products.md)).
 - [x] Upgrade Next.js to 16.4.5 or later (security holes in 16.4.0).
 - [x] Add the Supabase keys in Vercel.
-- [ ] Connect the Stripe webhook to the live site ([08](08-supabase-stock.md)).
+- [ ] Connect the Stripe webhook to the live site ([08](08-supabase.md)).
 - [ ] Create new Supabase keys (the current ones were sent in a chat) and replace them in `.env.local`.
 - [x] Real email and Instagram in `data/site.js`.
 - [ ] Real About text in `data/site.js`.
@@ -99,7 +112,7 @@
 - [ ] Check the rules for VAT and tax.
 
 ### Ideas for later
-- ~~**Automatic stock.**~~ Done 9 November 2026, see [08](08-supabase-stock.md).
+- ~~**Automatic stock.**~~ Done 9 November 2026, see [08](08-supabase.md).
 - **Free shipping over a certain amount**, for example "Free shipping over €60".
 - **More shipping zones**, for example one for Sweden / the Nordics.
 - **Contact form** or newsletter.

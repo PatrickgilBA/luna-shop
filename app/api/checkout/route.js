@@ -2,7 +2,7 @@
 //  KASSAN – körs på SERVERN, inte i kundens webbläsare
 // ============================================================================
 //  1. Tar emot varukorgen (vilka posters + hur många + frakt-zon).
-//  2. Kontrollerar allt mot data/products.js och lagret i Supabase.
+//  2. Kontrollerar allt mot produkterna och lagret i Supabase.
 //     Priserna hämtas HÄR, aldrig från webbläsaren – annars skulle en kund
 //     kunna fuska och ändra priset.
 //  3. Ber Stripe skapa en betalsida och skickar tillbaka adressen dit.
@@ -11,9 +11,8 @@
 // ============================================================================
 
 import Stripe from "stripe";
-import { getProduct } from "@/data/products";
 import { SHIPPING_ZONES } from "@/lib/shipping";
-import { getStock, withStock } from "@/lib/inventory";
+import { getProducts } from "@/lib/products";
 import { MAX_PER_PRINT } from "@/lib/limits";
 
 // Liten hjälpare för att svara med ett felmeddelande.
@@ -43,10 +42,10 @@ export async function POST(request) {
   // Var hemsidan ligger – behövs för att Stripe ska kunna skicka tillbaka kunden.
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
 
-  // Hämta det senaste lagret från Supabase.
-  let stock;
+  // Hämta de senaste priserna och lagret från Supabase.
+  let products;
   try {
-    stock = await getStock({ fresh: true });
+    products = await getProducts({ fresh: true });
   } catch (err) {
     console.error(err);
     return fail("Could not check the stock. Please try again.", 500);
@@ -55,9 +54,8 @@ export async function POST(request) {
   // Bygg Stripes lista över varor, och kontrollera varje rad.
   const lineItems = [];
   for (const item of items) {
-    const found = getProduct(item.slug);
-    if (!found) return fail("One of the prints in your cart no longer exists.");
-    const product = withStock(found, stock);
+    const product = products.find((p) => p.slug === item.slug);
+    if (!product) return fail("One of the prints in your cart no longer exists.");
     const quantity = Number(item.quantity);
     if (!Number.isInteger(quantity) || quantity < 1) return fail("Invalid quantity.");
     if (quantity > MAX_PER_PRINT) {

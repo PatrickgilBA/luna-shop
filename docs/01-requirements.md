@@ -44,7 +44,7 @@ Only three images had a name, size and price in the file name:
 - Greetings Friends, A3, €35
 - Protector, A5, €14
 
-Some had only a name (Tiger, Free as a Bird, Flower Pot, Butterflyman, Grid and Weave, Seasons of Change). The rest were just called `DSC_1689` or similar. Names were made up from what the images show, sizes and prices were guessed, and everything uncertain is marked with `// TODO` in `data/products.js`.
+Some had only a name (Tiger, Free as a Bird, Flower Pot, Butterflyman, Grid and Weave, Seasons of Change). The rest were just called `DSC_1689` or similar. Names were made up from what the images show, sizes and prices were guessed, and everything uncertain was marked with `// TODO`. *(Since 9 November 2026 the prints are in Supabase.)*
 **Luna needs to check and correct these.** See [04-editing-products.md](04-editing-products.md).
 
 ### Where should prints be shipped?
@@ -59,7 +59,7 @@ Stripe then only lets the customer enter an address in the chosen zone, so nobod
 **Answer: Yes, show "Sold out".**
 Every print has a stock number. At 0 it says "Sold out" and it can't be bought. The customer can't put more in the cart than there are.
 
-*Changed 9 November 2026:* stock is now in the Supabase database and goes down automatically after each purchase (see [08-supabase-stock.md](08-supabase-stock.md)).
+*Changed 9 November 2026:* stock is now in the Supabase database and goes down automatically after each purchase (see [08-supabase.md](08-supabase.md)).
 
 ### Which style?
 **Answer (8 October): colourful and playful.**

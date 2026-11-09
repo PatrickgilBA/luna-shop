@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { useCart } from "@/components/CartContext";
 
 export default function ClearCart({ sessionId }) {
-  const { loaded, clearCart, refreshStock } = useCart();
+  const { loaded, clearCart, refreshProducts } = useCart();
 
   useEffect(() => {
     if (!loaded) return;
@@ -19,7 +19,7 @@ export default function ClearCart({ sessionId }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sessionId }),
     })
-      .then(() => refreshStock())
+      .then(() => refreshProducts())
       .catch(() => {}); // går det inte räknar webhooken ner lagret i stället
   }, [loaded]);
 

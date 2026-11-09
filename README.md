@@ -2,7 +2,7 @@
 
 **Live site:** https://luna-shop-ten.vercel.app
 
-An online shop where the artist Luna sells her risograph prints. Visitors can browse the work, add prints to a cart, choose a quantity and pay by card with Stripe. Stock is kept in a Supabase database and goes down automatically after each purchase.
+An online shop where the artist Luna sells her risograph prints. Visitors can browse the work, add prints to a cart, choose a quantity and pay by card with Stripe. Every print, with its price and stock, is stored in a Supabase database, and the stock goes down automatically after each purchase.
 
 The design takes inspiration from artist portfolios such as [eglezvirblyte.com](https://www.eglezvirblyte.com/): a visual landing page with a tight grid of images and looping videos, before you enter the shop.
 
@@ -17,7 +17,7 @@ The design takes inspiration from artist portfolios such as [eglezvirblyte.com](
 - **Quantity selector** on the product page, max 10 of the same print per order
 - **Cart** saved in the browser, with shipping zones (EU / worldwide)
 - **Stripe Checkout**: prices and stock are always checked on the server
-- **Stock in Supabase**: shows "Sold out" at 0 and goes down after each paid order, through a Stripe webhook and a server-side check on the thank-you page. The same order is never counted twice.
+- **Prints and stock in Supabase**: name, price, images and stock come from the database. Shows "Sold out" at 0 and goes down after each paid order, through a Stripe webhook and a server-side check on the thank-you page. The same order is never counted twice.
 - Responsive layout, semantic HTML, keyboard focus styles, alt texts, and respect for "reduce motion"
 
 ---
@@ -31,7 +31,7 @@ You need **Node.js** (version 20 or later).
    npm install
    ```
 2. Copy `.env.example` to `.env.local` and fill in your own keys (see below).
-3. Set up the database: in Supabase, open **SQL Editor**, paste the contents of [`supabase/setup.sql`](supabase/setup.sql) and click **Run**.
+3. Set up the database: in Supabase, open **SQL Editor** and run [`supabase/01-setup.sql`](supabase/01-setup.sql), then [`supabase/02-products.sql`](supabase/02-products.sql).
 4. Start the development server:
    ```
    npm run dev
@@ -61,10 +61,10 @@ To test a purchase, use Stripe's test card `4242 4242 4242 4242`, any future dat
 npm test
 ```
 
-runs 97 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
+runs 72 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
 
-- **`data.test.js`**: every print has its fields and existing images, slugs are unique, the landing page grid has no gaps, shipping zones don't overlap.
-- **`inventory.test.js`**: reading stock from Supabase, lowering it after an order, and only refreshing the pages when an order is new.
+- **`data.test.js`**: the prints in `supabase/02-products.sql` have unique slugs and existing images, the landing page grid has no gaps, shipping zones don't overlap.
+- **`products.test.js`**: reading prints from Supabase, lowering the stock after an order, and only refreshing the pages when an order is new.
 - **`api.test.js`**: the checkout (server prices, stock, max 10 per print, invalid input), the thank-you page check and the Stripe webhook (signatures, unpaid orders, retries).
 
 Stripe and Supabase are replaced by fakes in the tests, so they never create payments or change the real stock.
@@ -81,8 +81,8 @@ Browser                         Server (Next.js)                    Stripe / Sup
 Add to cart (saved in browser)
 Checkout  ──────────────────▶   /api/checkout
                                 • checks prints exist
-                                • checks quantity ≤ stock ──────▶   Supabase: read stock
-                                • looks up the real prices
+                                • reads prices and stock ───────▶   Supabase: products
+                                • checks quantity ≤ stock and ≤ 10
                                 • creates a payment page ───────▶   Stripe Checkout
 Customer pays on Stripe  ◀──────────────────────────────────────    redirect to /success
 /success ───────────────────▶   /api/confirm-order
@@ -101,19 +101,18 @@ Customer pays on Stripe  ◀─────────────────�
 │   ├── page.js             ← landing page
 │   ├── shop/               ← shop and product pages
 │   ├── cart/, success/, about/
-│   └── api/                ← checkout, stock, confirm-order, stripe-webhook
+│   └── api/                ← checkout, products, confirm-order, stripe-webhook
 ├── components/             ← reusable React components (header, cart, video …)
 ├── data/
-│   ├── products.js         ← all prints (name, price, size, images)
 │   ├── home.js             ← which images and videos are on the landing page
 │   └── site.js             ← name, email, Instagram, About text
 ├── lib/
-│   ├── inventory.js        ← reads and updates stock in Supabase
+│   ├── products.js         ← reads the prints and stock from Supabase
 │   ├── orders.js           ← lowers stock after a paid order
 │   ├── limits.js           ← max prints of the same kind per order
 │   ├── shipping.js         ← shipping zones and prices
 │   └── format.js           ← price formatting
-├── supabase/setup.sql      ← database tables, security rules and function
+├── supabase/               ← SQL for the database tables, security rules and function
 ├── tests/                  ← automatic tests (npm test)
 ├── .github/workflows/      ← CI: tests and build on every pull request
 ├── public/                 ← images and videos shown on the site
@@ -131,8 +130,8 @@ Detailed guides are in [`docs/`](docs/):
 | [01-requirements.md](docs/01-requirements.md) | Requirements from the interview with the client |
 | [02-glossary.md](docs/02-glossary.md) | Glossary of technical terms |
 | [03-how-the-site-is-built.md](docs/03-how-the-site-is-built.md) | How the site is built, file by file |
-| [04-editing-products.md](docs/04-editing-products.md) | Changing prints and prices |
+| [04-editing-products.md](docs/04-editing-products.md) | Changing prints, prices and stock |
 | [05-stripe-payments.md](docs/05-stripe-payments.md) | Setting up Stripe payments |
 | [06-publishing.md](docs/06-publishing.md) | Publishing the site |
 | [07-changelog-and-todo.md](docs/07-changelog-and-todo.md) | Changelog and to-do list |
-| [08-supabase-stock.md](docs/08-supabase-stock.md) | Stock in Supabase and the Stripe webhook |
+| [08-supabase.md](docs/08-supabase.md) | The database, its security and the Stripe webhook |

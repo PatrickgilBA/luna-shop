@@ -1,63 +1,92 @@
-// Tests for the stock (lib/inventory.js) and for lowering it after an order
-// (lib/orders.js). Supabase and Stripe are replaced by fakes, so the tests
-// never touch the real database or the real Stripe account.
+// Tests for reading the prints from Supabase (lib/products.js) and for
+// lowering the stock after an order (lib/orders.js). Supabase and Stripe are
+// replaced by fakes, so the tests never touch the real database or Stripe.
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 vi.mock("next/cache", () => ({ revalidateTag: vi.fn() }));
 
 import { revalidateTag } from "next/cache";
-import { getStock, withStock, processOrder, INVENTORY_TAG } from "@/lib/inventory";
+import { getProducts, getProduct, processOrder, PRODUCTS_TAG } from "@/lib/products";
 import { countPaidOrder } from "@/lib/orders";
 
 const jsonResponse = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
 
+const MOTH = {
+  slug: "moth",
+  title: "Moth",
+  size: "A4",
+  price: "30.00", // Supabase sends prices with decimals as text
+  description: "An orange moth.",
+  images: ["/images/products/moth-1.jpg"],
+  stock: 2,
+};
+
 beforeEach(() => {
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://example.supabase.co");
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "sb_publishable_test");
   vi.stubEnv("SUPABASE_SECRET_KEY", "sb_secret_test");
+  vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.unstubAllEnvs();
   vi.clearAllMocks();
+  vi.restoreAllMocks();
 });
 
-describe("withStock", () => {
-  it("adds the stock from Supabase to a print", () => {
-    expect(withStock({ slug: "moth" }, { moth: 3 })).toEqual({ slug: "moth", stock: 3 });
-  });
-
-  it("treats a print that is missing in Supabase as sold out", () => {
-    expect(withStock({ slug: "new-print" }, { moth: 3 }).stock).toBe(0);
-  });
-});
-
-describe("getStock", () => {
-  it("turns the Supabase rows into { slug: stock }", async () => {
-    const fetch = vi.fn().mockResolvedValue(jsonResponse([{ slug: "moth", stock: 2 }, { slug: "tiger", stock: 0 }]));
+describe("getProducts", () => {
+  it("reads every print from Supabase, in shop order, with prices as numbers", async () => {
+    const fetch = vi.fn().mockResolvedValue(jsonResponse([MOTH]));
     vi.stubGlobal("fetch", fetch);
 
-    expect(await getStock()).toEqual({ moth: 2, tiger: 0 });
+    const products = await getProducts();
+    expect(products).toEqual([{ ...MOTH, price: 30 }]);
+
     const [url, options] = fetch.mock.calls[0];
-    expect(url).toContain("/rest/v1/inventory");
+    expect(url).toContain("/rest/v1/products?select=");
+    expect(url).toContain("order=sort_order.asc");
     expect(options.headers.apikey).toBe("sb_publishable_test"); // read-only key, never the secret one
-    expect(options.next.tags).toContain(INVENTORY_TAG);
+    expect(options.next).toEqual({ revalidate: 60, tags: [PRODUCTS_TAG] });
   });
 
-  it("skips the cache when fresh stock is needed (checkout)", async () => {
+  it("skips the cache when fresh data is needed (checkout)", async () => {
     const fetch = vi.fn().mockResolvedValue(jsonResponse([]));
     vi.stubGlobal("fetch", fetch);
 
-    await getStock({ fresh: true });
+    await getProducts({ fresh: true });
     expect(fetch.mock.calls[0][1].cache).toBe("no-store");
+    expect(fetch.mock.calls[0][1].next).toBeUndefined();
   });
 
   it("throws if Supabase answers with an error", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(jsonResponse({ message: "down" }, 503)));
-    await expect(getStock()).rejects.toThrow(/503/);
+    await expect(getProducts()).rejects.toThrow(/503/);
+  });
+});
+
+describe("getProduct", () => {
+  it("finds one print by slug", async () => {
+    const fetch = vi.fn().mockResolvedValue(jsonResponse([MOTH]));
+    vi.stubGlobal("fetch", fetch);
+
+    expect((await getProduct("moth")).title).toBe("Moth");
+    expect(fetch.mock.calls[0][0]).toContain("slug=eq.moth");
+  });
+
+  it("returns null for a print that doesn't exist", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(jsonResponse([])));
+    expect(await getProduct("nope")).toBeNull();
+  });
+
+  it("escapes the slug so it can't change the query", async () => {
+    const fetch = vi.fn().mockResolvedValue(jsonResponse([]));
+    vi.stubGlobal("fetch", fetch);
+
+    await getProduct("moth&select=*");
+    expect(fetch.mock.calls[0][0]).toContain("slug=eq.moth%26select%3D*");
   });
 });
 
@@ -98,7 +127,7 @@ describe("countPaidOrder", () => {
       { slug: "moth", quantity: 2 },
       { slug: "tiger", quantity: 1 },
     ]);
-    expect(revalidateTag).toHaveBeenCalledWith(INVENTORY_TAG, { expire: 0 });
+    expect(revalidateTag).toHaveBeenCalledWith(PRODUCTS_TAG, { expire: 0 });
   });
 
   it("does not refresh the pages when the order was already counted", async () => {

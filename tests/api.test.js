@@ -12,18 +12,14 @@ const stripeFake = {
 };
 vi.mock("stripe", () => ({ default: vi.fn(() => stripeFake) }));
 
-vi.mock("@/lib/inventory", async (importOriginal) => ({
-  ...(await importOriginal()),
-  getStock: vi.fn(),
-}));
+vi.mock("@/lib/products", () => ({ getProducts: vi.fn() }));
 vi.mock("@/lib/orders", () => ({ countPaidOrder: vi.fn() }));
 
-import { getStock } from "@/lib/inventory";
+import { getProducts } from "@/lib/products";
 import { countPaidOrder } from "@/lib/orders";
 import { POST as checkout } from "@/app/api/checkout/route";
 import { POST as confirmOrder } from "@/app/api/confirm-order/route";
 import { POST as webhook } from "@/app/api/stripe-webhook/route";
-import { getProduct } from "@/data/products";
 
 const post = (body) =>
   new Request("http://localhost/api", {
@@ -38,7 +34,11 @@ beforeEach(() => {
   vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_fake");
   vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_fake");
   vi.stubEnv("NEXT_PUBLIC_SITE_URL", "https://shop.example");
-  getStock.mockResolvedValue({ moth: 5, tiger: 0, catsuit: 20 });
+  getProducts.mockResolvedValue([
+    { slug: "moth", title: "Moth", size: "A4", price: 30, images: ["/m.jpg"], stock: 5 },
+    { slug: "tiger", title: "Tiger", size: "30 × 30 cm", price: 35, images: ["/t.jpg"], stock: 0 },
+    { slug: "catsuit", title: "Catsuit", size: "A4", price: 30, images: ["/c.jpg"], stock: 20 },
+  ]);
   stripeFake.checkout.sessions.create.mockResolvedValue({ url: "https://checkout.stripe.com/test" });
   vi.spyOn(console, "error").mockImplementation(() => {});
   vi.spyOn(console, "log").mockImplementation(() => {});
@@ -64,7 +64,7 @@ describe("POST /api/checkout", () => {
   it("uses the price from the server, never one sent by the browser", async () => {
     await checkout(post({ items: [{ slug: "moth", quantity: 1, price: 0.01 }], zone: "eu" }));
     const line = stripeFake.checkout.sessions.create.mock.calls[0][0].line_items[0];
-    expect(line.price_data.unit_amount).toBe(Math.round(getProduct("moth").price * 100));
+    expect(line.price_data.unit_amount).toBe(3000); // €30 from Supabase, in cents
     expect(line.price_data.product_data.metadata.slug).toBe("moth"); // needed by the webhook
   });
 
@@ -76,9 +76,9 @@ describe("POST /api/checkout", () => {
     expect(session.success_url).toBe("https://shop.example/success?session_id={CHECKOUT_SESSION_ID}");
   });
 
-  it("checks the stock without the cache", async () => {
+  it("reads prices and stock without the cache", async () => {
     await order([{ slug: "moth", quantity: 1 }]);
-    expect(getStock).toHaveBeenCalledWith({ fresh: true });
+    expect(getProducts).toHaveBeenCalledWith({ fresh: true });
   });
 
   it.each([
@@ -108,7 +108,7 @@ describe("POST /api/checkout", () => {
   });
 
   it("answers with an error if the stock can't be read", async () => {
-    getStock.mockRejectedValue(new Error("Supabase is down"));
+    getProducts.mockRejectedValue(new Error("Supabase is down"));
     const { status, body } = await read(await order([{ slug: "moth", quantity: 1 }]));
     expect(status).toBe(500);
     expect(body.error).toMatch(/check the stock/);

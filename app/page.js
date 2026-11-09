@@ -11,7 +11,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { getProduct } from "@/data/products";
+import { getProducts } from "@/lib/products";
 import LoopingVideo from "@/components/LoopingVideo";
 import tiles from "@/data/home";
 import site from "@/data/site";
@@ -24,7 +24,11 @@ const SIZES = {
   big: "(max-width: 700px) 100vw, 50vw",
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Posterns namn visas när man håller musen över en bild.
+  const products = await getProducts();
+  const bySlug = Object.fromEntries(products.map((product) => [product.slug, product]));
+
   return (
     <>
       {/* ---------- Namnet ---------- */}
@@ -50,7 +54,7 @@ export default function HomePage() {
       {/* ---------- Rutnätet med bilder ---------- */}
       <section className="tiles" aria-label="Selected work">
         {tiles.map((tile, i) => {
-          const product = tile.slug && getProduct(tile.slug);
+          const product = tile.slug && bySlug[tile.slug];
           const caption = tile.caption || product?.title;
           return (
             <Link
