@@ -25,7 +25,7 @@ Without a Stripe key, everything works except the last step. Clicking "Checkout"
    - Date: any future date, for example `12/34`
    - CVC: any three digits
 3. You should land on the "Thank you!" page, and the cart should be empty.
-4. The stock in Supabase goes down by the number you bought (see [08](08-supabase-stock.md)).
+4. The stock in Supabase goes down by the number you bought (see [08](08-supabase.md)).
 5. In Stripe → **Payments** you can see the purchase with the customer's address.
 
 ## Step 5 – When you want to receive real money
@@ -41,4 +41,4 @@ Without a Stripe key, everything works except the last step. Clicking "Checkout"
 ## Things to keep in mind
 - Stripe charges a fee per purchase (about 1.5% + €0.25 for European cards, more for cards outside the EU). Check current prices at stripe.com/pricing.
 - **VAT and tax:** selling art comes with rules about VAT and tax returns. It depends on how much you sell and where. Check with the tax authority or an accountant. Stripe has an add-on, *Stripe Tax*, if needed later.
-- Stock goes down automatically after a purchase, through the thank-you page and a Stripe *webhook*. The webhook needs to be connected in Stripe, see [08](08-supabase-stock.md).
+- Stock goes down automatically after a purchase, through the thank-you page and a Stripe *webhook*. The webhook needs to be connected in Stripe, see [08](08-supabase.md).

@@ -10,7 +10,7 @@
 //  Tack-sidan gör samma sak via app/api/confirm-order. Köpet räknas ändå
 //  bara en gång.
 //
-//  Läs docs/08-supabase-stock.md för hur man kopplar in webhooken hos Stripe.
+//  Läs docs/08-supabase.md för hur man kopplar in webhooken hos Stripe.
 // ============================================================================
 
 import Stripe from "stripe";

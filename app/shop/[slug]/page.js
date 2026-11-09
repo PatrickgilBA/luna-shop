@@ -7,22 +7,23 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import products, { getProduct } from "@/data/products";
 import { formatPrice } from "@/lib/format";
 import { SHIPPING_ZONES } from "@/lib/shipping";
-import { getStock, withStock } from "@/lib/inventory";
+import { getProducts, getProduct } from "@/lib/products";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 
 // Säger åt Next.js vilka produktsidor som finns, så de kan byggas i förväg (snabbare).
-export function generateStaticParams() {
+// Nya posters som läggs till senare byggs första gången någon besöker dem.
+export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((product) => ({ slug: product.slug }));
 }
 
 // Titeln i webbläsarfliken, t.ex. "Catsuit – Luna".
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProduct(slug);
   if (!product) return {};
   return {
     title: product.title,
@@ -33,9 +34,8 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;
-  const found = getProduct(slug);
-  if (!found) notFound(); // Visar 404-sidan om postern inte finns.
-  const product = withStock(found, await getStock()); // lagret kommer från Supabase
+  const product = await getProduct(slug); // från Supabase, med lagret
+  if (!product) notFound(); // Visar 404-sidan om postern inte finns.
 
   return (
     <article className="product">

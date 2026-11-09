@@ -18,19 +18,19 @@ The repository was created with the GitHub CLI (`gh repo create`). The `.gitigno
 ### 2. Connect GitHub to Vercel ✔ done
 1. Go to https://vercel.com and sign in with your GitHub account.
 2. **Add New → Project** → choose the `luna-shop` repository → **Import**.
-3. Open **Environment Variables** and add every variable from `.env.local` (see the table in [08](08-supabase-stock.md) and the README):
+3. Open **Environment Variables** and add every variable from `.env.local` (see the table in [08](08-supabase.md) and the README):
    - `STRIPE_SECRET_KEY`
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`
    - `NEXT_PUBLIC_SITE_URL` is optional. Without it, the site uses the address it is visited on.
 4. Click **Deploy**. After about a minute the site is live.
-5. Connect the Stripe webhook to the new address (see [08](08-supabase-stock.md)) and add `STRIPE_WEBHOOK_SECRET` in Vercel.
+5. Connect the Stripe webhook to the new address (see [08](08-supabase.md)) and add `STRIPE_WEBHOOK_SECRET` in Vercel.
 
 ### 3. Your own domain (optional)
 Buy for example `lunaprints.com` from a domain seller (or directly in Vercel). Add it under *Project → Settings → Domains* and follow the instructions. Then update `NEXT_PUBLIC_SITE_URL`.
 
 ## Updating the site later
 1. Create a new branch for the change.
-2. Change the files (for example `data/products.js`) and check that it looks right with `npm run dev`.
+2. Change the files (for example `data/home.js`) and check that it looks right with `npm run dev`.
 3. Commit and push the branch, and open a pull request on GitHub.
 4. Check the preview link from Vercel in the pull request.
 5. Merge the pull request. Vercel updates the live site automatically.

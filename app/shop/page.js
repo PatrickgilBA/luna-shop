@@ -1,19 +1,17 @@
 // ============================================================================
 //  BUTIKEN  (adress: /shop)
 // ============================================================================
-//  Visar alla posters från data/products.js i ett rutnät.
-//  Lagret ("Sold out") hämtas från Supabase (lib/inventory.js).
+//  Visar alla posters i ett rutnät. De hämtas från Supabase (lib/products.js).
 // ============================================================================
 
-import products from "@/data/products";
 import ProductCard from "@/components/ProductCard";
 import site from "@/data/site";
-import { getStock, withStock } from "@/lib/inventory";
+import { getProducts } from "@/lib/products";
 
 export const metadata = { title: "Shop" };
 
 export default async function ShopPage() {
-  const stock = await getStock();
+  const products = await getProducts();
 
   return (
     <>
@@ -28,7 +26,7 @@ export default async function ShopPage() {
 
       <section className="grid">
         {products.map((product) => (
-          <ProductCard key={product.slug} product={withStock(product, stock)} />
+          <ProductCard key={product.slug} product={product} />
         ))}
       </section>
     </>

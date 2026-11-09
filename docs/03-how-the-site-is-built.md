@@ -16,7 +16,7 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 | `/api/checkout` | `app/api/checkout/route.js` | Not a page. The checkout, which talks to Stripe |
 | `/api/confirm-order` | `app/api/confirm-order/route.js` | Not a page. The thank-you page asks it to check the order with Stripe and lower the stock |
 | `/api/stripe-webhook` | `app/api/stripe-webhook/route.js` | Not a page. Stripe reports payments here, and the stock is lowered in Supabase |
-| `/api/stock` | `app/api/stock/route.js` | Not a page. Gives the cart the stock from Supabase |
+| `/api/products` | `app/api/products/route.js` | Not a page. Gives the cart the prints (name, price, image, stock) from Supabase |
 
 `[slug]` in square brackets means "anything". One and the same file is used for all 24 product pages.
 
@@ -55,10 +55,9 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 
 | File | Contents |
 |---|---|
-| `data/products.js` | All prints (name, price, size, images, description) |
 | `data/site.js` | Name, email, Instagram, About text |
 | `data/home.js` | Which images and videos are in the landing page grid, and how big they are (small/big/tall/wide) |
-| `lib/inventory.js` | Reads the stock from Supabase (see [08](08-supabase-stock.md)) |
+| `lib/products.js` | Reads every print (name, price, size, images, description, stock) from Supabase (see [08](08-supabase.md)) |
 | `lib/orders.js` | Lowers the stock after a paid order |
 | `lib/limits.js` | Max number of the same print per order (10) |
 | `lib/shipping.js` | Shipping zones, prices and countries |
@@ -79,7 +78,7 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
                              • checks the prints exist
                              • checks quantity ≤ stock ──────────→  Supabase
                                and ≤ 10
-                             • looks up the REAL price in products.js
+                             • looks up the REAL price in Supabase
                              • asks Stripe for a payment page  ──→  4. Creates the page
                      ←──────────────────────────────────────────────  and replies with a link
  5. Is sent to Stripe's payment page,

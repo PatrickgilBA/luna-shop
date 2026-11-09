@@ -5,10 +5,11 @@
 --  den 9 november 2026. Den sparas här så att det går att se
 --  hur databasen är uppbyggd, eller bygga upp den igen i ett
 --  nytt Supabase-projekt. Kör den INTE igen i samma projekt.
---  Läs docs/08-supabase-stock.md.
+--  Kör sedan 02-products.sql.
+--  Läs docs/08-supabase.md.
 -- ============================================================
 
--- 1. Tabellen: en rad per poster. "slug" är samma som i data/products.js.
+-- 1. Tabellen: en rad per poster. (Ersattes av tabellen products i 02-products.sql.)
 create table public.inventory (
   slug       text primary key,
   stock      integer not null default 0 check (stock >= 0),

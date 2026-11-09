@@ -2,9 +2,8 @@
 // every print, every image and video, and the landing page grid.
 
 import { describe, it, expect } from "vitest";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import products, { getProduct } from "@/data/products";
 import tiles from "@/data/home";
 import site from "@/data/site";
 import { SHIPPING_ZONES } from "@/lib/shipping";
@@ -13,36 +12,28 @@ import { formatPrice } from "@/lib/format";
 
 const publicFile = (path) => join(process.cwd(), "public", path);
 
-describe("products", () => {
-  it("has prints", () => {
-    expect(products.length).toBeGreaterThan(0);
+// The prints live in Supabase. supabase/02-products.sql holds the first 24,
+// so we check that file: unique slugs, and images that really exist.
+const seed = readFileSync(join(process.cwd(), "supabase", "02-products.sql"), "utf8");
+const seedRows = [...seed.matchAll(/^\s+\('([^']+)', .*?array\[([^\]]*)\]/gm)].map((m) => ({
+  slug: m[1],
+  images: [...m[2].matchAll(/'([^']+)'/g)].map((i) => i[1]),
+}));
+
+describe("products in supabase/02-products.sql", () => {
+  it("has the 24 prints", () => {
+    expect(seedRows.length).toBe(24);
   });
 
   it("has unique slugs that are safe in a web address", () => {
-    const slugs = products.map((p) => p.slug);
+    const slugs = seedRows.map((row) => row.slug);
     expect(new Set(slugs).size).toBe(slugs.length);
     for (const slug of slugs) expect(slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
   });
 
-  it.each(products.map((p) => [p.slug, p]))("%s has every field filled in", (_, product) => {
-    expect(product.title).toBeTruthy();
-    expect(product.size).toBeTruthy();
-    expect(product.description).toBeTruthy();
-    expect(product.price).toBeGreaterThan(0);
-    expect(product.images.length).toBeGreaterThan(0);
-  });
-
-  it.each(products.map((p) => [p.slug, p]))("%s has images that exist", (_, product) => {
-    for (const image of product.images) expect(existsSync(publicFile(image)), image).toBe(true);
-  });
-
-  it("does not keep stock in the code (it lives in Supabase)", () => {
-    for (const product of products) expect(product).not.toHaveProperty("stock");
-  });
-
-  it("getProduct finds a print by slug, and nothing for unknown slugs", () => {
-    expect(getProduct("catsuit")?.title).toBe("Catsuit");
-    expect(getProduct("does-not-exist")).toBeUndefined();
+  it.each(seedRows.map((row) => [row.slug, row]))("%s has images that exist", (_, row) => {
+    expect(row.images.length).toBeGreaterThan(0);
+    for (const image of row.images) expect(existsSync(publicFile(image)), image).toBe(true);
   });
 });
 
@@ -69,7 +60,7 @@ describe("landing page grid", () => {
 
   it("links every tile to a real print, or has its own caption", () => {
     for (const tile of tiles) {
-      if (tile.slug) expect(getProduct(tile.slug), tile.slug).toBeDefined();
+      if (tile.slug) expect(seedRows.map((row) => row.slug), tile.slug).toContain(tile.slug);
       else expect(tile.caption, JSON.stringify(tile)).toBeTruthy();
     }
   });

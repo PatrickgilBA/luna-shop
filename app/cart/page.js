@@ -11,19 +11,19 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useCart } from "@/components/CartContext";
-import { getProduct } from "@/data/products";
 import { SHIPPING_ZONES } from "@/lib/shipping";
 import { formatPrice } from "@/lib/format";
 
 export default function CartPage() {
-  const { items, loaded, maxOf, setQuantity, removeItem } = useCart();
+  const { items, loaded, products, productsFailed, productOf, maxOf, setQuantity, removeItem } =
+    useCart();
   const [zone, setZone] = useState("eu");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Koppla ihop varukorgen med produktinfon (namn, pris, bild).
+  // Koppla ihop varukorgen med produktinfon (namn, pris, bild) från Supabase.
   const lines = items
-    .map((item) => ({ ...item, product: getProduct(item.slug) }))
+    .map((item) => ({ ...item, product: productOf(item.slug) }))
     .filter((line) => line.product);
 
   const subtotal = lines.reduce((sum, line) => sum + line.product.price * line.quantity, 0);
@@ -50,8 +50,18 @@ export default function CartPage() {
     }
   }
 
-  // Vänta tills varukorgen har lästs in från webbläsarens minne.
-  if (!loaded) return <div className="message-page" />;
+  // Gick det inte att hämta produkterna kan varukorgen inte visas.
+  if (items.length > 0 && !products && productsFailed) {
+    return (
+      <div className="message-page">
+        <h1>Something went wrong</h1>
+        <p>We couldn't load the shop right now. Please reload the page.</p>
+      </div>
+    );
+  }
+
+  // Vänta tills varukorgen och produkterna har lästs in.
+  if (!loaded || (items.length > 0 && !products)) return <div className="message-page" />;
 
   if (lines.length === 0) {
     return (

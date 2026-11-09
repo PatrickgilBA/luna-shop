@@ -1,59 +1,55 @@
 # 4. Editing prints and prices
 
-Almost everything you want to change in the shop is in **one file: `data/products.js`**.
-The **stock** (how many are left), however, is in the Supabase database. See [08](08-supabase-stock.md).
+Every print (name, price, size, description, images and stock) is stored in the **`products` table in Supabase**, not in the code. You change them there, and the site updates by itself within a minute. No publishing needed.
 
-Open `data/products.js` in VS Code. Each print looks like this:
+*(Until 9 November 2026 the prints were in `data/products.js`. That file is gone.)*
 
-```js
-  {
-    slug: "catsuit",
-    title: "Catsuit",
-    size: "A4 (21 × 29.7 cm)",
-    price: 30,
-    images: ["/images/products/catsuit-1.jpg", "/images/products/catsuit-2.jpg"],
-    description: "A very cool cat in a very blue suit. Risograph print on thick paper.",
-  },
-```
+## Open the table
+1. Sign in at [supabase.com](https://supabase.com/dashboard) and open the project.
+2. Click **Table Editor** (the grid icon in the left menu) → **products**.
 
-> **Rules so nothing breaks**
-> - Text goes inside quotes: `"Catsuit"`. Numbers do *not* have quotes: `30`.
-> - Every line ends with a comma `,`.
-> - Every print starts with `{` and ends with `},`.
-> - If the text needs a `"`, write `\"` instead.
-> - If the site shows a red error message after a change, you have probably lost a comma or a quote. Look at the line the error points to.
+Each row is one print:
 
-## Change price, name, size or description
-Change the value and save (⌘ + S). If `npm run dev` is running, the change shows on localhost right away.
-On the internet it shows after you publish again (see [06](06-publishing.md)).
+| Column | What it is | Example |
+|---|---|---|
+| `slug` | Short id used in the web address, `/shop/catsuit`. Only lowercase letters, numbers and hyphens. Must be unique | `catsuit` |
+| `title` | The name shown on the site | `Catsuit` |
+| `size` | The size shown on the site | `A4 (21 × 29.7 cm)` |
+| `price` | Price in euro | `30` |
+| `description` | A short text about the print | `A very cool cat …` |
+| `images` | The images, as a list. The first one is shown in the shop grid | `{/images/products/catsuit-1.jpg,/images/products/catsuit-2.jpg}` |
+| `stock` | How many are left. `0` = "Sold out" | `10` |
+| `sort_order` | Order in the shop, lowest first | `10` |
 
-## Stock and "Sold out"
-Stock goes down automatically after each purchase. To change it by hand, for example after restocking or to mark a print as sold out (0), do it in Supabase. See [08](08-supabase-stock.md).
+The database refuses values that would break the shop: an empty name, a price of 0 or less, negative stock, or a slug with spaces or capital letters.
 
-## Remove a print completely
-Delete everything from `{` up to and including `},` for that print. Its row in Supabase can stay, it does no harm.
+## Change price, name, size, description or stock
+Double-click the cell, type the new value and press Enter. It shows on the site within **one minute**.
+
+The stock goes down automatically after each purchase, so you only change it by hand after restocking, or to mark a print as sold out (`0`).
 
 ## Change the order in the shop
-Prints are shown in the same order as in the file. Move a whole `{ … },` block up or down.
+Change `sort_order`. Prints are shown from the lowest number to the highest. The numbers go up in steps of 10 (10, 20, 30 …), so you can put a print in between, for example `15`.
 
 ## Add a new print
 1. **Prepare the image.** It should be at most about 1600 pixels on the longest side, and a `.jpg`. On a Mac: open the image in Preview → Tools → Adjust Size. Or in Terminal:
    ```
    sips -Z 1600 "path/to/image.jpg" --out public/images/products/new-name-1.jpg
    ```
-2. **Put the image** in `public/images/products/`. Use only lowercase letters, numbers and hyphens in the file name (no spaces or special characters like å/ä/ö).
-3. **Copy an existing `{ … },` block** in `products.js` and paste it where you want the new print.
-4. **Change all the values.** `slug` must be unique, for example `"blue-cat"`.
-5. **Add the print in Supabase** with the same `slug` and the number in stock (see [08](08-supabase-stock.md)). Otherwise it shows as "Sold out".
-6. Save and check on localhost.
+2. **Put the image** in `public/images/products/` and publish it (commit, push and merge, see [06](06-publishing.md)). Use only lowercase letters, numbers and hyphens in the file name.
+3. In Supabase: **products → Insert → Insert row**. Fill in `slug`, `title`, `size`, `price`, `description`, `images` (for example `{/images/products/new-name-1.jpg}`) and `stock`. Click **Save**.
 
-The first image in `images` is shown in the shop grid. The others are shown as small images on the product page.
+The new print shows in the shop within a minute, and gets its own page at `/shop/new-name`.
 
-## Go through the placeholders (TODO)
-When the site was built, only three prints had a real name, price and size. Everything else is guessed and marked with `// TODO`.
-Search for **TODO** in VS Code (⌘ + Shift + F) to find them all. Remove `// TODO` when the line is correct.
+*Coming soon: an admin page on the site with a form for this, including image upload.*
 
-## Other things you can change
+## Remove a print
+Right-click the row → **Delete row**. It disappears from the shop within a minute. If someone has it in their cart, it is removed from the cart.
+
+## Check the placeholders
+When the site was built, only three prints had a real name, price and size (Catsuit, Greetings Friends and Protector). The other 21 names, sizes and prices were guessed from the images. **Luna needs to check them in the table.**
+
+## Other things you can change (in the code)
 
 | What | Where |
 |---|---|
@@ -65,3 +61,5 @@ Search for **TODO** in VS Code (⌘ + Shift + F) to find them all. Remove `// TO
 | Text in the scrolling strip | `app/layout.js`, the line with `<Marquee text="…" />` |
 | Max number of the same print per order (now 10) | `lib/limits.js` |
 | Text under "Add to cart" (about riso and frames) | `app/shop/[slug]/page.js` |
+
+Changes in the code show on the live site after they are published (see [06](06-publishing.md)).
