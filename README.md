@@ -1,5 +1,7 @@
 # Luna – online shop for risograph prints
 
+**Live site:** https://luna-shop-ten.vercel.app
+
 An online shop where the artist Luna sells her risograph prints. Visitors can browse the work, add prints to a cart, choose a quantity and pay by card with Stripe. Stock is kept in a Supabase database and goes down automatically after each purchase.
 
 The design takes inspiration from artist portfolios such as [eglezvirblyte.com](https://www.eglezvirblyte.com/): a visual landing page with a tight grid of images and looping videos, before you enter the shop.

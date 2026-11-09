@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 9 November 2026 – live on Vercel
+- Next.js was upgraded from 16.4.0 to 16.4.5 to fix three known security holes (pull request #1). `npm audit` reports 0 vulnerabilities.
+- The GitHub repository was connected to Vercel, with the keys from `.env.local` as environment variables. The site is live at https://luna-shop-ten.vercel.app
+- **Tested on the live site:** every page, image and video loads, the stock is read from Supabase, the checkout rejects 11 of the same print and creates a real Stripe test payment page.
+
 ### 9 November 2026 – Git, GitHub and English documentation
 - The project was put under version control with Git and uploaded to a public GitHub repository: https://github.com/PatrickgilBA/luna-shop
 - The original images and videos are kept out of the repository (`.gitignore`); only the resized copies in `public/` are uploaded. No secret keys are uploaded.
@@ -75,15 +80,16 @@
 
 ### Must be done before the shop opens
 - [ ] Go through every `TODO` in `data/products.js`: name, size and price. The right stock is set in Supabase.
-- [ ] Upgrade Next.js to 16.4.5 or later (security holes in 16.4.0).
-- [ ] Connect the Stripe webhook and add the Supabase keys in Vercel ([08](08-supabase-stock.md)).
+- [x] Upgrade Next.js to 16.4.5 or later (security holes in 16.4.0).
+- [x] Add the Supabase keys in Vercel.
+- [ ] Connect the Stripe webhook to the live site ([08](08-supabase-stock.md)).
 - [ ] Create new Supabase keys (the current ones were sent in a chat) and replace them in `.env.local`.
 - [x] Real email and Instagram in `data/site.js`.
 - [ ] Real About text in `data/site.js`.
 - [ ] Real shipping prices in `lib/shipping.js`.
 - [x] Create a Stripe account and test a purchase with the test card ([05](05-stripe-payments.md)).
 - [x] Put the code on GitHub.
-- [ ] Publish on Vercel ([06](06-publishing.md)).
+- [x] Publish on Vercel ([06](06-publishing.md)).
 - [ ] Switch to the Stripe live key.
 - [ ] Check the rules for VAT and tax.
 
