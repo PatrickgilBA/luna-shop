@@ -1,7 +1,7 @@
-// Den rullande textremsan under menyn.
+// The scrolling text strip under the menu.
 
 export default function Marquee({ text }) {
-  // Texten upprepas så att remsan aldrig tar slut.
+  // The text is repeated so the strip never runs out.
   const repeated = Array(8).fill(text).join("  ✿  ");
   return (
     <div className="marquee" aria-hidden="true">

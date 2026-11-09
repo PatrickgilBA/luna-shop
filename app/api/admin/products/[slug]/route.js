@@ -1,7 +1,7 @@
 // ============================================================================
-//  ÄNDRA ELLER TA BORT EN POSTER  (adress: /api/admin/products/catsuit osv.)
+//  CHANGE OR DELETE A PRINT  (address: /api/admin/products/catsuit etc.)
 // ============================================================================
-//  Bara för admins. PATCH ändrar postern, DELETE tar bort den.
+//  Admins only. PATCH changes the print, DELETE removes it.
 // ============================================================================
 
 import { updateProduct, deleteProduct } from "@/lib/products";

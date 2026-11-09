@@ -1,9 +1,9 @@
 // ============================================================================
-//  TACK-SIDAN  (adress: /success)
+//  THE THANK-YOU PAGE  (address: /success)
 // ============================================================================
-//  Stripe skickar tillbaka kunden hit när betalningen gick igenom, med
-//  köpets id i adressen (?session_id=...). ClearCart använder det för att
-//  räkna ner lagret.
+//  Stripe sends the customer back here when the payment went through, with
+//  the order id in the address (?session_id=...). ClearCart uses it to
+//  lower the stock.
 // ============================================================================
 
 import ClearCart from "./ClearCart";
@@ -22,7 +22,7 @@ export default async function SuccessPage({ searchParams }) {
         <br />
         Your prints will be packed with love and shipped soon.
       </p>
-      {/* Vanlig länk (inte Link) så att butiken laddas om helt och visar det nya lagret. */}
+      {/* A plain link (not Link) so the shop reloads fully and shows the new stock. */}
       <a href="/shop" className="button">
         Back to the shop
       </a>

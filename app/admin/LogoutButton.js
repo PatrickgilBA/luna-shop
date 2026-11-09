@@ -1,5 +1,5 @@
 "use client";
-// Knappen "Sign out" på adminsidan.
+// The "Sign out" button on the admin page.
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";

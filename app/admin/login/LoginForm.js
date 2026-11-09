@@ -1,7 +1,7 @@
 "use client";
-// Inloggningsformuläret. Kontrollerar fälten direkt i webbläsaren
-// (lib/validation.js), skickar dem till /api/admin/login med fetch och
-// visar svaret utan att sidan laddas om.
+// The sign-in form. Checks the fields right away in the browser
+// (lib/validation.js), sends them to /api/admin/login with fetch and
+// shows the answer without reloading the page.
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -11,13 +11,13 @@ import FormField from "@/components/FormField";
 export default function LoginForm() {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
-  const [errors, setErrors] = useState({}); // fel under varje fält
-  const [message, setMessage] = useState(""); // fel för hela formuläret
+  const [errors, setErrors] = useState({}); // errors under each field
+  const [message, setMessage] = useState(""); // error for the whole form
   const [sending, setSending] = useState(false);
 
   function update(field, value) {
     setForm((current) => ({ ...current, [field]: value }));
-    // Ta bort felet under fältet när man börjar rätta det.
+    // Remove the error under the field as soon as you start fixing it.
     if (errors[field]) setErrors((current) => ({ ...current, [field]: undefined }));
   }
 
@@ -25,11 +25,11 @@ export default function LoginForm() {
     event.preventDefault();
     setMessage("");
 
-    // 1. Kontrollera i webbläsaren först.
+    // 1. Check in the browser first.
     const { errors: found } = validateLogin(form);
     if (found) return setErrors(found);
 
-    // 2. Skicka till servern.
+    // 2. Send to the server.
     setSending(true);
     try {
       const response = await fetch("/api/admin/login", {

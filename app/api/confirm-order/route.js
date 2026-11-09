@@ -1,13 +1,13 @@
 // ============================================================================
-//  BEKRÄFTA KÖP FRÅN TACK-SIDAN  (adress: /api/confirm-order)
+//  CONFIRM AN ORDER FROM THE THANK-YOU PAGE  (address: /api/confirm-order)
 // ============================================================================
-//  När kunden har betalat skickar Stripe hen till /success?session_id=...
-//  Tack-sidan skickar då köpets id hit, och vi:
-//    1. Frågar Stripe om köpet verkligen är betalt (vi litar inte på webbläsaren).
-//    2. Räknar ner lagret i Supabase (lib/orders.js).
+//  When the customer has paid, Stripe sends them to /success?session_id=...
+//  The thank-you page then sends the order id here, and we:
+//    1. Ask Stripe whether the order really is paid (we don't trust the browser).
+//    2. Lower the stock in Supabase (lib/orders.js).
 //
-//  Det gör att lagret räknas ner även när webhooken inte är inkopplad,
-//  till exempel när man testar på sin egen dator.
+//  This lowers the stock even when the webhook isn't connected,
+//  for example when testing on your own computer.
 // ============================================================================
 
 import Stripe from "stripe";
@@ -30,7 +30,7 @@ export async function POST(request) {
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  // 1. Är köpet betalt? Svaret kommer direkt från Stripe.
+  // 1. Is the order paid? The answer comes straight from Stripe.
   let session;
   try {
     session = await stripe.checkout.sessions.retrieve(sessionId);
@@ -39,7 +39,7 @@ export async function POST(request) {
   }
   if (session.payment_status !== "paid") return fail("The order is not paid.");
 
-  // 2. Räkna ner lagret. Har det redan gjorts händer inget.
+  // 2. Lower the stock. If that has already been done, nothing happens.
   try {
     const counted = await countPaidOrder(stripe, sessionId);
     return Response.json({ ok: true, counted });

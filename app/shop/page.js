@@ -1,7 +1,7 @@
 // ============================================================================
-//  BUTIKEN  (adress: /shop)
+//  THE SHOP  (address: /shop)
 // ============================================================================
-//  Visar alla posters i ett rutnät. De hämtas från Supabase (lib/products.js).
+//  Shows every print in a grid. They come from Supabase (lib/products.js).
 // ============================================================================
 
 import ProductCard from "@/components/ProductCard";

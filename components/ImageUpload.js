@@ -1,8 +1,8 @@
 "use client";
-// Knappen "Upload images" i produktformuläret. Man väljer en eller flera
-// bilder; varje bild görs mindre i webbläsaren (lib/resize-image.js) och
-// skickas till /api/admin/images. När den är uppladdad får formuläret
-// bildens adress (onUploaded).
+// The "Upload images" button in the product form. You choose one or more
+// images; each one is made smaller in the browser (lib/resize-image.js) and
+// sent to /api/admin/images. Once it is uploaded, the form gets
+// the image's address (onUploaded).
 
 import { useId, useState } from "react";
 import { resizeImage } from "@/lib/resize-image";
@@ -11,12 +11,12 @@ const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
 export default function ImageUpload({ onUploaded }) {
   const inputId = useId();
-  const [status, setStatus] = useState(""); // t.ex. "Uploading 1 of 3…"
+  const [status, setStatus] = useState(""); // e.g. "Uploading 1 of 3…"
   const [error, setError] = useState("");
 
   async function handleFiles(event) {
     const files = [...event.target.files];
-    event.target.value = ""; // så att samma fil kan väljas igen
+    event.target.value = ""; // so the same file can be chosen again
     setError("");
 
     for (const [index, file] of files.entries()) {

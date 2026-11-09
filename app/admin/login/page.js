@@ -1,8 +1,8 @@
 // ============================================================================
-//  INLOGGNING FÖR ADMIN  (adress: /admin/login)
+//  ADMIN SIGN-IN  (address: /admin/login)
 // ============================================================================
-//  Själva formuläret ligger i LoginForm.js. Är man redan inloggad som admin
-//  skickas man direkt vidare till /admin.
+//  The form itself is in LoginForm.js. If you are already signed in as an admin,
+//  you are sent straight on to /admin.
 // ============================================================================
 
 import { cookies } from "next/headers";

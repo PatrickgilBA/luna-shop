@@ -1,7 +1,7 @@
 "use client";
-// Knappen "Add to cart" på produktsidan, med val av antal (− 1 +).
-// Man kan som mest ha MAX_PER_PRINT (10) av samma poster i varukorgen,
-// och aldrig fler än som finns i lager.
+// The "Add to cart" button on the product page, with a quantity selector (− 1 +).
+// The cart can hold at most MAX_PER_PRINT (10) of the same print,
+// and never more than are in stock.
 
 import { useState } from "react";
 import Link from "next/link";
@@ -16,10 +16,10 @@ export default function AddToCartButton({ product }) {
   const inCart = items.find((item) => item.slug === product.slug)?.quantity || 0;
   const soldOut = product.stock <= 0;
 
-  // Hur många till som får läggas i varukorgen.
+  // How many more may be added to the cart.
   const maxAddable = Math.max(0, Math.min(product.stock, MAX_PER_PRINT) - inCart);
   const maxReached = maxAddable <= 0;
-  const amount = Math.min(quantity, Math.max(1, maxAddable)); // håll antalet inom gränsen
+  const amount = Math.min(quantity, Math.max(1, maxAddable)); // keep the quantity within the limit
 
   if (soldOut) {
     return (

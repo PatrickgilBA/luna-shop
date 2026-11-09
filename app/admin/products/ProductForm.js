@@ -1,10 +1,10 @@
 "use client";
 // ============================================================================
-//  FORMULÄRET FÖR EN POSTER (adminsidan)
+//  THE FORM FOR A PRINT (admin page)
 // ============================================================================
-//  Används både för att lägga till en ny poster och för att ändra en
-//  befintlig. Fälten kontrolleras direkt när man lämnar dem (lib/validation.js),
-//  och skickas sedan till servern med fetch. Servern kontrollerar allt igen.
+//  Used both to add a new print and to change an existing one.
+//  Each field is checked as soon as you leave it (lib/validation.js),
+//  and then sent to the server with fetch. The server checks everything again.
 // ============================================================================
 
 import { useState } from "react";
@@ -16,8 +16,8 @@ import ImageUpload from "@/components/ImageUpload";
 
 const EMPTY = { slug: "", title: "", size: "", price: "", description: "", images: "", stock: "", sort_order: "" };
 
-// Gör om en poster från databasen till formulärets textfält. En ny poster
-// får ett ordningsnummer som lägger den sist i butiken.
+// Turns a print from the database into the form's text fields. A new print
+// gets an order number that puts it last in the shop.
 function toForm(product, nextSortOrder) {
   if (!product) return { ...EMPTY, sort_order: String(nextSortOrder ?? "") };
   return {
@@ -32,12 +32,12 @@ function toForm(product, nextSortOrder) {
   };
 }
 
-// Bildfältet är text med en adress per rad; här blir det en lista.
+// The images field is text with one address per line; here it becomes a list.
 function toList(text) {
   return text.split("\n").map((line) => line.trim()).filter(Boolean);
 }
 
-// Gör om en titel till en slug: "Blue Cat!" → "blue-cat".
+// Turns a title into a slug: "Blue Cat!" → "blue-cat".
 function slugify(title) {
   return title
     .toLowerCase()
@@ -60,17 +60,17 @@ export default function ProductForm({ product, nextSortOrder }) {
   function update(field, value) {
     setForm((current) => {
       const next = { ...current, [field]: value };
-      // En ny posters slug följer namnet, tills man ändrar slug själv.
+      // A new print's slug follows the name, until you change the slug yourself.
       if (isNew && field === "title" && !slugEdited) next.slug = slugify(value);
       return next;
     });
     if (field === "slug") setSlugEdited(true);
-    // Ta bort felet under fältet (och under slug, om den fylldes i automatiskt).
+    // Remove the error under the field (and under slug, if it was filled in automatically).
     const autoSlug = isNew && field === "title" && !slugEdited;
     setErrors((current) => ({ ...current, [field]: undefined, ...(autoSlug && { slug: undefined }) }));
   }
 
-  // Kontrollera ett fält när man lämnar det, så att felet syns direkt.
+  // Check a field when you leave it, so the error shows right away.
   function check(field) {
     const { errors: found } = validateProduct(form, { isNew });
     setErrors((current) => ({ ...current, [field]: found?.[field] }));
@@ -111,8 +111,8 @@ export default function ProductForm({ product, nextSortOrder }) {
 
   const images = toList(form.images);
 
-  // Ändra bildlistan (uppladdning eller "Remove"). Tar emot en lista eller en
-  // funktion, så att flera uppladdningar i rad inte skriver över varandra.
+  // Change the image list (upload or "Remove"). Takes a list or a
+  // function, so several uploads in a row don't overwrite each other.
   function setImages(next) {
     setForm((current) => {
       const list = typeof next === "function" ? next(toList(current.images)) : next;
@@ -172,7 +172,7 @@ export default function ProductForm({ product, nextSortOrder }) {
           <ul className="image-previews">
             {images.map((src, index) => (
               <li key={src}>
-                {/* Vanlig <img> här: adressen kan ha skrivits för hand och kanske inte finns. */}
+                {/* A plain <img> here: the address may have been typed by hand and might not exist. */}
                 <img src={src} alt={`Image ${index + 1}`} />
                 {index === 0 && <span className="image-badge">In the shop</span>}
                 <button type="button" className="image-remove" onClick={() => setImages(images.filter((s) => s !== src))}>

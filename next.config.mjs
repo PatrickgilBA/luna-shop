@@ -1,8 +1,8 @@
-// Inställningar för Next.js.
+// Next.js settings.
 
-// Bilder som laddas upp på adminsidan sparas i Supabase Storage. Next.js visar
-// bara bilder från andra webbadresser som står här, så vi tillåter just vår
-// bildmapp – inga andra.
+// Images uploaded on the admin page are stored in Supabase Storage. Next.js only
+// shows images from outside addresses listed here, so we allow exactly our
+// bucket – nothing else.
 const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
 /** @type {import('next').NextConfig} */

@@ -1,6 +1,6 @@
 "use client";
-// Knappen "Delete this print". Frågar först om man är säker, eftersom det
-// inte går att ångra.
+// The "Delete this print" button. Asks first whether you are sure, because it
+// can't be undone.
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";

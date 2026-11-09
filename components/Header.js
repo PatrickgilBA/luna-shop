@@ -1,5 +1,5 @@
 "use client";
-// Menyn högst upp på varje sida.
+// The menu at the top of every page.
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -10,7 +10,7 @@ export default function Header() {
   const { count } = useCart();
   const pathname = usePathname();
 
-  // Markera länken till sidan man är på just nu.
+  // Highlight the link to the page you are on right now.
   const isActive = (href) => pathname.startsWith(href);
 
   return (

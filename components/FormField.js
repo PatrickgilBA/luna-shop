@@ -1,6 +1,6 @@
-// Ett fält i ett formulär: etikett, själva fältet, en valfri hjälptext och
-// ett felmeddelande. aria-invalid och aria-describedby gör att skärmläsare
-// läser upp hjälptexten och felet.
+// A form field: label, the input itself, an optional hint and
+// an error message. aria-invalid and aria-describedby make screen readers
+// read out the hint and the error.
 
 import { cloneElement } from "react";
 

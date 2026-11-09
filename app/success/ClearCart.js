@@ -1,8 +1,8 @@
 "use client";
-// Körs på tack-sidan när kunden har betalat. Visar inget på skärmen.
-//   1. Ber servern bekräfta köpet hos Stripe och räkna ner lagret
+// Runs on the thank-you page after the customer has paid. Shows nothing on screen.
+//   1. Asks the server to confirm the order with Stripe and lower the stock
 //      (app/api/confirm-order).
-//   2. Tömmer varukorgen och hämtar det nya lagret.
+//   2. Empties the cart and loads the new stock.
 
 import { useEffect } from "react";
 import { useCart } from "@/components/CartContext";
@@ -20,7 +20,7 @@ export default function ClearCart({ sessionId }) {
       body: JSON.stringify({ sessionId }),
     })
       .then(() => refreshProducts())
-      .catch(() => {}); // går det inte räknar webhooken ner lagret i stället
+      .catch(() => {}); // if this fails, the webhook lowers the stock instead
   }, [loaded]);
 
   return null;

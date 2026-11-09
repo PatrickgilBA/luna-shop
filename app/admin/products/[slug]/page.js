@@ -1,5 +1,5 @@
 // ============================================================================
-//  ÄNDRA EN POSTER  (adress: /admin/products/catsuit osv., bara för admins)
+//  EDIT A PRINT  (address: /admin/products/catsuit etc., admins only)
 // ============================================================================
 
 import { cookies } from "next/headers";
@@ -16,7 +16,7 @@ export default async function EditProductPage({ params }) {
   if (!(await getAdmin(await cookies()))) redirect("/admin/login");
 
   const { slug } = await params;
-  const product = await getProduct(slug, { fresh: true }); // alltid det senaste
+  const product = await getProduct(slug, { fresh: true }); // always the latest
   if (!product) notFound();
 
   return (

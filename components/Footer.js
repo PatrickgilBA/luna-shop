@@ -1,4 +1,4 @@
-// Sidfoten längst ner på varje sida.
+// The footer at the bottom of every page.
 
 import Link from "next/link";
 import site from "@/data/site";

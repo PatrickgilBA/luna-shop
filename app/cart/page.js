@@ -1,10 +1,10 @@
 "use client";
 // ============================================================================
-//  VARUKORGEN  (adress: /cart)
+//  THE CART  (address: /cart)
 // ============================================================================
-//  Kunden ser sina posters, väljer frakt-zon och klickar "Checkout".
-//  Då skickas varukorgen till vår server (app/api/checkout/route.js),
-//  som skapar en betalsida hos Stripe och skickar kunden dit.
+//  The customer sees their prints, chooses a shipping zone and clicks "Checkout".
+//  The cart is then sent to our server (app/api/checkout/route.js),
+//  which creates a payment page at Stripe and sends the customer there.
 // ============================================================================
 
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Koppla ihop varukorgen med produktinfon (namn, pris, bild) från Supabase.
+  // Combine the cart with the print details (name, price, image) from Supabase.
   const lines = items
     .map((item) => ({ ...item, product: productOf(item.slug) }))
     .filter((line) => line.product);
@@ -43,14 +43,14 @@ export default function CartPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Something went wrong.");
-      window.location.href = data.url; // Skicka kunden till Stripes betalsida.
+      window.location.href = data.url; // Send the customer to Stripe's payment page.
     } catch (err) {
       setError(err.message);
       setLoading(false);
     }
   }
 
-  // Gick det inte att hämta produkterna kan varukorgen inte visas.
+  // If the prints couldn't be loaded, the cart can't be shown.
   if (items.length > 0 && !products && productsFailed) {
     return (
       <div className="message-page">
@@ -60,7 +60,7 @@ export default function CartPage() {
     );
   }
 
-  // Vänta tills varukorgen och produkterna har lästs in.
+  // Wait until the cart and the prints have loaded.
   if (!loaded || (items.length > 0 && !products)) return <div className="message-page" />;
 
   if (lines.length === 0) {

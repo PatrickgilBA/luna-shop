@@ -1,8 +1,8 @@
 // ============================================================================
-//  LAYOUT – "ramen" runt alla sidor
+//  LAYOUT – the "frame" around every page
 // ============================================================================
-//  Allt här (meny, rullande text, sidfot) syns på VARJE sida.
-//  {children} är platsen där den aktuella sidan stoppas in.
+//  Everything here (menu, scrolling text, footer) shows on EVERY page.
+//  {children} is where the current page is put in.
 // ============================================================================
 
 import { Ultra, DM_Sans } from "next/font/google";
@@ -13,11 +13,11 @@ import Marquee from "@/components/Marquee";
 import site from "@/data/site";
 import "./globals.css";
 
-// Typsnitt från Google Fonts. Next.js laddar ner dem automatiskt.
+// Fonts from Google Fonts. Next.js downloads them automatically.
 const displayFont = Ultra({ weight: "400", subsets: ["latin"], variable: "--font-display" });
 const bodyFont = DM_Sans({ subsets: ["latin"], variable: "--font-body" });
 
-// Titel och beskrivning som syns i Google och i webbläsarfliken.
+// Title and description shown in Google and in the browser tab.
 export const metadata = {
   title: { default: `${site.name} – Riso prints`, template: `%s – ${site.name}` },
   description: `${site.tagline}. Shop original risograph posters by ${site.name}.`,

@@ -1,31 +1,31 @@
 // ============================================================================
-//  STARTSIDANS BILDER
+//  THE LANDING PAGE IMAGES
 // ============================================================================
 //
-//  Här bestämmer du vilka bilder som syns i rutnätet på startsidan.
-//  Bilderna visas i samma ordning som i listan och pusslas ihop automatiskt.
+//  Here you decide which images are shown in the landing page grid.
+//  They are shown in the same order as in the list, and fitted together automatically.
 //
-//  Fälten betyder:
+//  The fields mean:
 //
-//    image   – bilden (ligger i public/images/)
-//    video   – ELLER en video (ligger i public/videos/). Den spelar ljudlöst i loop.
-//    poster  – för videor: en stillbild som visas medan videon laddar.
-//    slug    – vilken poster bilden länkar till (samma slug som i products.js).
-//              Utan slug länkar bilden till About-sidan.
-//    caption – texten som syns när man håller musen över bilden.
-//              Utan caption visas posterns namn.
-//    size    – hur stor rutan är:
-//                "small" = 1 ruta
-//                "big"   = 2 × 2 rutor
-//                "tall"  = 1 bred, 2 hög   (passar stående bilder)
-//                "wide"  = 2 bred, 1 hög   (passar liggande bilder)
+//    image   – the image (in public/images/)
+//    video   – OR a video (in public/videos/). It plays silently on a loop.
+//    poster  – for videos: a still image shown while the video loads.
+//    slug    – which print the image links to (its slug in Supabase).
+//              Without a slug, the image links to the About page.
+//    caption – the text shown when you hover over the image.
+//              Without a caption, the print's name is shown.
+//    size    – how big the tile is:
+//                "small" = 1 tile
+//                "big"   = 2 × 2 tiles
+//                "tall"  = 1 wide, 2 high   (suits portrait images)
+//                "wide"  = 2 wide, 1 high   (suits landscape images)
 //
-//  Bilderna och videorna beskärs för att fylla sin ruta. På dator är rutnätet 4 rutor
-//  brett, på mobil 2.
+//  Images and videos are cropped to fill their tile. On a computer the grid is 4 tiles
+//  wide, on a phone 2.
 // ============================================================================
 
 const tiles = [
-  // Överst: den roterande hunden (video) uppe till höger.
+  // At the top: the spinning dog (video), top right.
   { image: "/images/products/greetings-friends-1.jpg", slug: "greetings-friends", size: "big" },
   { video: "/videos/spotted-cat.mp4", poster: "/videos/spotted-cat.jpg", slug: "spotted-cat", size: "wide" },
   { image: "/images/products/tiger-1.jpg", slug: "tiger", size: "small" },
@@ -36,7 +36,7 @@ const tiles = [
   { image: "/images/products/moon-cats-1.jpg", slug: "moon-cats", size: "small" },
   { image: "/images/products/catsuit-1.jpg", slug: "catsuit", size: "small" },
 
-  // I mitten: ormen (video).
+  // In the middle: the snake (video).
   { image: "/images/artist/luna-3.jpg", caption: "About Luna", size: "tall" },
   { image: "/images/products/flower-friends-1.jpg", slug: "flower-friends", size: "small" },
   { video: "/videos/snake.mp4", poster: "/videos/snake.jpg", caption: "Animation by Luna", size: "big" },
@@ -45,7 +45,7 @@ const tiles = [
   { image: "/images/artist/luna-4.jpg", caption: "About Luna", size: "wide" },
   { image: "/images/products/resting-dog-1.jpg", slug: "resting-dog", size: "wide" },
 
-  // Längst ner: den blå figuren och tulpanen (videor).
+  // At the bottom: the blue creature and the tulip (videos).
   { image: "/images/products/seasons-of-change-1.jpg", slug: "seasons-of-change", size: "big" },
   { video: "/videos/blue-creature.mp4", poster: "/videos/blue-creature.jpg", caption: "Animation by Luna", size: "tall" },
   { image: "/images/products/sun-hug-1.jpg", slug: "sun-hug", size: "tall" },

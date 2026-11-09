@@ -1,16 +1,16 @@
 "use client";
 // ============================================================================
-//  VARUKORGEN
+//  THE CART
 // ============================================================================
-//  En "context" i React är ett sätt att dela information mellan alla delar
-//  av sidan. Här delar vi varukorgen, så att både menyn (som visar antalet)
-//  och varukorgssidan ser samma sak.
+//  A "context" in React is a way to share information between every part
+//  of the site. Here we share the cart, so both the menu (which shows the count)
+//  and the cart page see the same thing.
 //
-//  Varukorgen sparas i webbläsarens minne (localStorage), så den finns kvar
-//  om kunden laddar om sidan eller kommer tillbaka senare.
+//  The cart is saved in the browser's storage (localStorage), so it is still
+//  there if the customer reloads the page or comes back later.
 //
-//  I varukorgen sparar vi BARA vilken poster (slug) och hur många.
-//  Namn, pris, bild och lager hämtas från Supabase via /api/products
+//  The cart ONLY stores which print (slug) and how many.
+//  Name, price, image and stock come from Supabase through /api/products
 //  (app/api/products/route.js).
 // ============================================================================
 
@@ -23,23 +23,23 @@ const STORAGE_KEY = "luna-cart";
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]); // [{ slug, quantity }]
   const [loaded, setLoaded] = useState(false);
-  const [products, setProducts] = useState(null); // alla posters – null tills de laddats
+  const [products, setProducts] = useState(null); // every print – null until loaded
   const [productsFailed, setProductsFailed] = useState(false);
 
-  // När sidan öppnas: läs in sparad varukorg.
+  // When the page opens: load the saved cart.
   useEffect(() => {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      // Posters som inte längre finns tas bort när produkterna har laddats (se nedan).
+      // Prints that no longer exist are removed once the prints have loaded (see below).
       setItems(saved.filter((item) => item && typeof item.slug === "string" && item.quantity > 0));
     } catch {
-      // Om något är trasigt börjar vi bara med en tom varukorg.
+      // If something is broken, we just start with an empty cart.
     }
     setLoaded(true);
   }, []);
 
-  // När sidan öppnas: hämta produkterna (med lagret). Går det inte, fungerar
-  // varukorgen ändå – kassan kontrollerar alltid allt innan betalningen.
+  // When the page opens: load the prints (with their stock). If that fails, the
+  // cart still works – the checkout always checks everything before payment.
   function refreshProducts() {
     return fetch("/api/products", { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
@@ -53,11 +53,11 @@ export function CartProvider({ children }) {
     refreshProducts();
   }, []);
 
-  // En poster utifrån dess slug, eller undefined.
+  // A print by its slug, or undefined.
   const productOf = (slug) => products?.find((product) => product.slug === slug);
 
-  // När både varukorgen och produkterna har laddats: ta bort det som sålt slut
-  // eller inte finns längre, och minska antalet om det finns färre kvar.
+  // When both the cart and the prints have loaded: remove what is sold out
+  // or no longer exists, and lower the quantity if fewer are left.
   useEffect(() => {
     if (!loaded || !products) return;
     setItems((current) =>
@@ -67,22 +67,22 @@ export function CartProvider({ children }) {
     );
   }, [loaded, products]);
 
-  // Hur många av en poster man får ha i varukorgen: det som finns i lager,
-  // men aldrig fler än MAX_PER_PRINT (10). Innan produkterna laddats gäller bara 10.
+  // How many of a print the cart may hold: what is in stock,
+  // but never more than MAX_PER_PRINT (10). Before the prints have loaded, only 10 applies.
   const maxOf = (slug) =>
     Math.min(products ? (productOf(slug)?.stock ?? 0) : Infinity, MAX_PER_PRINT);
 
-  // Varje gång varukorgen ändras: spara den.
+  // Every time the cart changes: save it.
   useEffect(() => {
     if (!loaded) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     } catch {
-      // T.ex. privat surfläge – varukorgen fungerar ändå, sparas bara inte.
+      // E.g. private browsing – the cart still works, it just isn't saved.
     }
   }, [items, loaded]);
 
-  // Lägg till en poster. Man kan aldrig lägga fler än det som finns i lager.
+  // Add a print. You can never add more than are in stock.
   function addItem(slug, quantity = 1) {
     const available = maxOf(slug);
     if (available <= 0) return;
@@ -141,7 +141,7 @@ export function CartProvider({ children }) {
   );
 }
 
-// Använd så här i en komponent:  const { items, addItem } = useCart();
+// Use it like this in a component:  const { items, addItem } = useCart();
 export function useCart() {
   return useContext(CartContext);
 }

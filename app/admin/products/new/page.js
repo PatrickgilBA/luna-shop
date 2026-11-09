@@ -1,5 +1,5 @@
 // ============================================================================
-//  LÄGG TILL EN POSTER  (adress: /admin/products/new, bara för admins)
+//  ADD A PRINT  (address: /admin/products/new, admins only)
 // ============================================================================
 
 import { cookies } from "next/headers";
@@ -14,7 +14,7 @@ export const metadata = { title: "Add a print", robots: { index: false } };
 export default async function NewProductPage() {
   if (!(await getAdmin(await cookies()))) redirect("/admin/login");
 
-  // Föreslå ett ordningsnummer så att den nya postern hamnar sist i butiken.
+  // Suggest an order number that puts the new print last in the shop.
   const products = await getProducts({ fresh: true });
   const nextSortOrder = Math.max(0, ...products.map((product) => product.sort_order ?? 0)) + 10;
 
