@@ -1,10 +1,10 @@
 "use client";
-// En video som spelar ljudlöst och om och om igen (loop), som en levande bild.
-// Används i rutnätet på startsidan.
+// A video that plays silently over and over (loop), like a living picture.
+// Used in the landing page grid.
 //
-// Webbläsare spelar bara upp videor automatiskt om ljudet är av, därför "muted".
-// "playsInline" gör att iPhone spelar videon i rutan i stället för i helskärm.
-// Har besökaren stängt av animationer i sin dator står videon still.
+// Browsers only autoplay videos without sound, hence "muted".
+// "playsInline" makes iPhones play the video in its tile instead of full screen.
+// If the visitor has turned off animations on their computer, the video stays still.
 
 import { useEffect, useRef } from "react";
 
@@ -14,11 +14,11 @@ export default function LoopingVideo({ src, poster }) {
   useEffect(() => {
     const video = ref.current;
     if (!video) return;
-    video.muted = true; // säkerställ ljudlöst, annars vägrar vissa webbläsare att starta
+    video.muted = true; // make sure it is silent, otherwise some browsers refuse to start it
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       video.pause();
     } else {
-      video.play().catch(() => {}); // går det inte att starta syns stillbilden (poster)
+      video.play().catch(() => {}); // if it can't start, the still image (poster) shows
     }
   }, []);
 

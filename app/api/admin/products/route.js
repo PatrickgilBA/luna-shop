@@ -1,9 +1,9 @@
 // ============================================================================
-//  LÄGG TILL EN POSTER  (adress: /api/admin/products, bara för admins)
+//  ADD A PRINT  (address: /api/admin/products, admins only)
 // ============================================================================
-//  Formuläret på /admin/products/new skickar hit. Vi kontrollerar att det är
-//  en admin, kontrollerar fälten (samma regler som formuläret) och sparar
-//  den nya postern i Supabase.
+//  The form on /admin/products/new posts here. We check that it is an
+//  admin, check the fields (the same rules as the form) and save the
+//  new print in Supabase.
 // ============================================================================
 
 import { createProduct } from "@/lib/products";

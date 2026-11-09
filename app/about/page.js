@@ -1,7 +1,7 @@
 // ============================================================================
-//  ABOUT-SIDAN  (adress: /about)
+//  THE ABOUT PAGE  (address: /about)
 // ============================================================================
-//  Texten ändras i data/site.js. Bilderna ligger i public/images/artist/.
+//  The text is changed in data/site.js. The images are in public/images/artist/.
 // ============================================================================
 
 import Image from "next/image";
@@ -9,7 +9,7 @@ import site from "@/data/site";
 
 export const metadata = { title: "About" };
 
-// Bilderna på konstnären. Första bilden blir stor.
+// The photos of the artist. The first one is shown large.
 const photos = [
   { src: "/images/artist/luna-1.jpg", alt: `${site.name} in the studio` },
   { src: "/images/artist/luna-2.jpg", alt: `${site.name} at an exhibition` },

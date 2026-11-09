@@ -1,4 +1,4 @@
-// Visas när någon går till en adress som inte finns (fel 404).
+// Shown when someone goes to an address that doesn't exist (error 404).
 
 import Link from "next/link";
 

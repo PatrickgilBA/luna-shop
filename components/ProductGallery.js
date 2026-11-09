@@ -1,5 +1,5 @@
 "use client";
-// Bildvisningen på produktsidan: en stor bild + små bilder att klicka på.
+// The images on the product page: one large image + small ones to click.
 
 import { useState } from "react";
 import Image from "next/image";

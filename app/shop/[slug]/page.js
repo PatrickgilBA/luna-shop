@@ -1,8 +1,8 @@
 // ============================================================================
-//  PRODUKTSIDA  (adress: /shop/catsuit, /shop/tiger, ...)
+//  PRODUCT PAGE  (address: /shop/catsuit, /shop/tiger, ...)
 // ============================================================================
-//  [slug] i mappnamnet betyder att den här filen används för ALLA posters.
-//  Next.js skickar in slug:en från adressen, och vi letar upp rätt poster.
+//  [slug] in the folder name means this one file is used for ALL prints.
+//  Next.js passes in the slug from the address, and we look up the right print.
 // ============================================================================
 
 import Link from "next/link";
@@ -13,14 +13,14 @@ import { getProducts, getProduct } from "@/lib/products";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
 
-// Säger åt Next.js vilka produktsidor som finns, så de kan byggas i förväg (snabbare).
-// Nya posters som läggs till senare byggs första gången någon besöker dem.
+// Tells Next.js which product pages exist, so they can be built in advance (faster).
+// New prints added later are built the first time someone visits them.
 export async function generateStaticParams() {
   const products = await getProducts();
   return products.map((product) => ({ slug: product.slug }));
 }
 
-// Titeln i webbläsarfliken, t.ex. "Catsuit – Luna".
+// The title in the browser tab, e.g. "Catsuit – Luna".
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const product = await getProduct(slug);
@@ -34,8 +34,8 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;
-  const product = await getProduct(slug); // från Supabase, med lagret
-  if (!product) notFound(); // Visar 404-sidan om postern inte finns.
+  const product = await getProduct(slug); // from Supabase, with the stock
+  if (!product) notFound(); // Shows the 404 page if the print doesn't exist.
 
   return (
     <article className="product">

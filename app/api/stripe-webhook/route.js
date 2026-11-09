@@ -1,16 +1,16 @@
 // ============================================================================
-//  STRIPE-WEBHOOK – räknar ner lagret efter ett köp  (adress: /api/stripe-webhook)
+//  STRIPE WEBHOOK – lowers the stock after a purchase  (address: /api/stripe-webhook)
 // ============================================================================
-//  När en kund har betalat skickar Stripe ett meddelande hit
-//  ("checkout.session.completed"). Då:
-//    1. Kontrollerar vi att meddelandet verkligen kommer från Stripe
-//       (med STRIPE_WEBHOOK_SECRET från .env.local).
-//    2. Räknar ner lagret i Supabase (lib/orders.js).
+//  When a customer has paid, Stripe sends a message here
+//  ("checkout.session.completed"). Then:
+//    1. We check that the message really comes from Stripe
+//       (with STRIPE_WEBHOOK_SECRET from .env.local).
+//    2. We lower the stock in Supabase (lib/orders.js).
 //
-//  Tack-sidan gör samma sak via app/api/confirm-order. Köpet räknas ändå
-//  bara en gång.
+//  The thank-you page does the same through app/api/confirm-order. The order
+//  is still only counted once.
 //
-//  Läs docs/08-supabase.md för hur man kopplar in webhooken hos Stripe.
+//  See docs/08-supabase.md for how to connect the webhook in Stripe.
 // ============================================================================
 
 import Stripe from "stripe";
@@ -24,10 +24,10 @@ export async function POST(request) {
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-  // 1. Är det verkligen Stripe som skickar? Annars kunde vem som helst räkna ner lagret.
+  // 1. Is it really Stripe sending this? Otherwise anyone could lower the stock.
   let event;
   try {
-    const body = await request.text(); // måste läsas som ren text för att kontrollen ska fungera
+    const body = await request.text(); // must be read as raw text for the check to work
     const signature = request.headers.get("stripe-signature");
     event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
@@ -35,7 +35,7 @@ export async function POST(request) {
     return new Response("Invalid signature", { status: 400 });
   }
 
-  // Vi bryr oss bara om betalda köp. Allt annat svarar vi bara "OK" på.
+  // We only care about paid orders. Everything else just gets an "OK".
   const isPaid =
     (event.type === "checkout.session.completed" && event.data.object.payment_status === "paid") ||
     event.type === "checkout.session.async_payment_succeeded";
@@ -44,11 +44,11 @@ export async function POST(request) {
   const session = event.data.object;
 
   try {
-    // 2. Räkna ner lagret. Samma köp räknas aldrig två gånger.
+    // 2. Lower the stock. The same order is never counted twice.
     await countPaidOrder(stripe, session.id);
     return new Response("OK", { status: 200 });
   } catch (err) {
-    // Svarar vi med ett fel försöker Stripe igen senare – bra om Supabase var nere en stund.
+    // If we reply with an error, Stripe tries again later – useful if Supabase was down for a moment.
     console.error("Stripe webhook: could not update the inventory.", err);
     return new Response("Could not update inventory", { status: 500 });
   }

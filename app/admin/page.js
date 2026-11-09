@@ -1,9 +1,9 @@
 // ============================================================================
-//  ADMINSIDAN  (adress: /admin)
+//  THE ADMIN PAGE  (address: /admin)
 // ============================================================================
-//  Bara för inloggade admins (se lib/auth.js). Alla andra skickas till
-//  /admin/login. Visar alla posters med pris och lager, och länkar till
-//  formulären för att lägga till, ändra och ta bort dem.
+//  Only for signed-in admins (see lib/auth.js). Everyone else is sent to
+//  /admin/login. Shows every print with its price and stock, and links to
+//  the forms to add, change and delete them.
 // ============================================================================
 
 import { cookies } from "next/headers";
@@ -20,8 +20,8 @@ export default async function AdminPage({ searchParams }) {
   const admin = await getAdmin(await cookies());
   if (!admin) redirect("/admin/login");
 
-  const products = await getProducts({ fresh: true }); // alltid de senaste siffrorna
-  const { saved, deleted } = await searchParams; // satt av formulären efter en ändring
+  const products = await getProducts({ fresh: true }); // always the latest numbers
+  const { saved, deleted } = await searchParams; // set by the forms after a change
 
   return (
     <div className="admin">

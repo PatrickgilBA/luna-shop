@@ -1,35 +1,35 @@
 /* ============================================================================
-   DESIGN / UTSEENDE
+   DESIGN
    ============================================================================
-   CSS bestämmer hur allt ser ut: färger, typsnitt, storlekar, avstånd.
+   CSS decides how everything looks: colours, fonts, sizes, spacing.
 
-   Vill du byta färger? Ändra bara värdena under :root här nedanför –
-   de används överallt på sidan.
+   Want different colours? Just change the values under :root below –
+   they are used everywhere on the site.
 
-   Stilen är lugn och "redaktionell", som en konstnärsportfolio: ljust papper,
-   mycket luft, bilderna får ta plats. Riso-blått är accentfärgen.
+   The style is calm and "editorial", like an artist portfolio: light paper,
+   lots of space, room for the images. Riso blue is the accent colour.
    ============================================================================ */
 
 :root {
-  --blue: #0078bf; /* riso-blått – accentfärgen */
+  --blue: #0078bf; /* riso blue – the accent colour */
   --pink: #ff48b0;
   --yellow: #ffe800;
   --orange: #ff6c2f;
 
-  --paper: #faf7f2; /* bakgrund – som riso-papper */
-  --tint: #efe9df; /* bakom bilder medan de laddas */
+  --paper: #faf7f2; /* background – like riso paper */
+  --tint: #efe9df; /* behind images while they load */
   --ink: #161616; /* text */
   --ink-soft: #5c5a57;
-  --line: rgba(22, 22, 22, 0.14); /* tunna linjer */
+  --line: rgba(22, 22, 22, 0.14); /* thin lines */
 
   --radius: 6px;
-  --gutter: clamp(16px, 4vw, 56px); /* avstånd i kanterna, växer med skärmen */
+  --gutter: clamp(16px, 4vw, 56px); /* space at the edges, grows with the screen */
 
   --font-display: "Ultra", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
 }
 
-/* ---------- Grundinställningar ---------- */
+/* ---------- Basics ---------- */
 
 * {
   box-sizing: border-box;
@@ -81,7 +81,7 @@ h1 {
   outline-offset: 3px;
 }
 
-/* Små rubriker/etiketter i versaler. */
+/* Small headings/labels in capitals. */
 .nav,
 .arrow-link {
   font-size: 0.8rem;
@@ -90,7 +90,7 @@ h1 {
   text-transform: uppercase;
 }
 
-/* ---------- Meny ---------- */
+/* ---------- Menu ---------- */
 
 .header {
   position: sticky;
@@ -147,7 +147,7 @@ h1 {
   letter-spacing: 0;
 }
 
-/* ---------- Rullande text ---------- */
+/* ---------- Scrolling text ---------- */
 
 .marquee {
   overflow: hidden;
@@ -172,7 +172,7 @@ h1 {
   }
 }
 
-/* ---------- Startsidan: namnet ---------- */
+/* ---------- Landing page: the name ---------- */
 
 .intro {
   display: flex;
@@ -217,10 +217,10 @@ h1 {
   color: var(--blue);
 }
 
-/* ---------- Startsidan: rutnätet med bilder ---------- */
-/* Fyra kolumner med fyrkantiga rutor och smala mellanrum. Varje bild tar
-   1 eller 2 rutor åt varje håll (size i data/home.js). "dense" gör att
-   bilderna pusslas ihop så att det inte blir hål. */
+/* ---------- Landing page: the image grid ---------- */
+/* Four columns of square tiles with narrow gaps. Each image takes
+   1 or 2 tiles in each direction (size in data/home.js). "dense" makes
+   the images fit together without holes. */
 
 .tiles {
   --cols: 4;
@@ -251,7 +251,7 @@ h1 {
   transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-/* Videorna fyller rutan precis som bilderna. */
+/* The videos fill their tile just like the images. */
 .tile video {
   position: absolute;
   inset: 0;
@@ -259,7 +259,7 @@ h1 {
   height: 100%;
 }
 
-/* Titeln syns när man håller musen över bilden. */
+/* The title shows when you hover over the image. */
 .tile-caption {
   position: absolute;
   inset: 0;
@@ -271,7 +271,7 @@ h1 {
   font-size: clamp(1.2rem, 2.2vw, 2.2rem);
   line-height: 1.05;
   color: #fff;
-  background: rgba(0, 120, 191, 0.82); /* riso-blått */
+  background: rgba(0, 120, 191, 0.82); /* riso blue */
   opacity: 0;
   transition: opacity 0.25s;
 }
@@ -286,8 +286,8 @@ h1 {
   transform: scale(1.04);
 }
 
-/* På mobil: två kolumner, och titeln syns som en liten etikett längst ner
-   (det finns ingen mus att hålla över bilden med). */
+/* On phones: two columns, and the title shows as a small label at the bottom
+   (there is no mouse to hover with). */
 @media (max-width: 700px) {
   .tiles {
     --cols: 2;
@@ -310,7 +310,7 @@ h1 {
   }
 }
 
-/* ---------- Startsidan: vidare till butiken ---------- */
+/* ---------- Landing page: on to the shop ---------- */
 
 .enter {
   background: var(--blue);
@@ -336,14 +336,14 @@ h1 {
   margin: 20px 0 0;
 }
 
-/* Respektera de som har stängt av animationer i sin dator. */
+/* Respect visitors who have turned off animations on their computer. */
 @media (prefers-reduced-motion: reduce) {
   .marquee-track {
     animation: none;
   }
 }
 
-/* ---------- Butikens rubrik ---------- */
+/* ---------- Shop heading ---------- */
 
 .shop-intro {
   display: flex;
@@ -364,7 +364,7 @@ h1 {
   color: var(--ink-soft);
 }
 
-/* ---------- Butikens rutnät ---------- */
+/* ---------- Shop grid ---------- */
 
 .grid {
   display: grid;
@@ -374,7 +374,7 @@ h1 {
   border-top: 1px solid var(--line);
 }
 
-/* På mobil: två kolumner. */
+/* On phones: two columns. */
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr 1fr;
@@ -439,7 +439,7 @@ h1 {
   border-radius: 999px;
 }
 
-/* ---------- Knappar och små länkar ---------- */
+/* ---------- Buttons and small links ---------- */
 
 .button {
   display: inline-block;
@@ -493,7 +493,7 @@ h1 {
   color: #900;
 }
 
-/* ---------- Produktsida ---------- */
+/* ---------- Product page ---------- */
 
 .product {
   display: grid;
@@ -591,7 +591,7 @@ h1 {
   align-items: flex-start;
 }
 
-/* Antalsväljaren (− 1 +) bredvid "Add to cart". */
+/* The quantity selector (− 1 +) next to "Add to cart". */
 .add-row {
   display: flex;
   flex-wrap: wrap;
@@ -632,7 +632,7 @@ h1 {
 .about-photo {
   position: relative;
   aspect-ratio: 2 / 3;
-  border-radius: 999px 999px 0 0; /* bågform upptill */
+  border-radius: 999px 999px 0 0; /* arched top */
   overflow: hidden;
   background: var(--tint);
 }
@@ -650,7 +650,7 @@ h1 {
   font-size: clamp(3rem, 9vw, 7rem);
 }
 
-/* Tre bilder i olika storlekar och höjder, som i kollaget på startsidan. */
+/* Three images in different sizes and heights. */
 .about-strip {
   display: grid;
   grid-template-columns: 4fr 3fr 5fr;
@@ -677,7 +677,7 @@ h1 {
   .about-strip-photo:nth-child(3) { aspect-ratio: 3 / 2; margin-top: 40px; }
 }
 
-/* ---------- Varukorg ---------- */
+/* ---------- Cart ---------- */
 
 .cart {
   max-width: 960px;
@@ -833,7 +833,7 @@ h1 {
   padding-top: 10px;
 }
 
-/* ---------- Formulär (inloggning och admin) ---------- */
+/* ---------- Forms (sign-in and admin) ---------- */
 
 .form {
   display: flex;
@@ -1124,7 +1124,7 @@ h1 {
   color: #1d5e3a;
 }
 
-/* Text bara för skärmläsare. */
+/* Text only for screen readers. */
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -1138,7 +1138,7 @@ h1 {
   color: var(--ink-soft);
 }
 
-/* På mobil: tabellen kan rullas i sidled i stället för att trycka ut sidan. */
+/* On phones: the table scrolls sideways instead of pushing the page wider. */
 @media (max-width: 600px) {
   .admin-table {
     display: block;
@@ -1146,7 +1146,7 @@ h1 {
   }
 }
 
-/* ---------- Enkla meddelandesidor (tom varukorg, tack, 404) ---------- */
+/* ---------- Simple message pages (empty cart, thank you, 404) ---------- */
 
 .message-page {
   min-height: 55vh;
@@ -1158,7 +1158,7 @@ h1 {
   padding: 48px var(--gutter);
 }
 
-/* ---------- Sidfot ---------- */
+/* ---------- Footer ---------- */
 
 .footer {
   color: var(--ink-soft);

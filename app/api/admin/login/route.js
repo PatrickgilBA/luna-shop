@@ -1,13 +1,13 @@
 // ============================================================================
-//  LOGGA IN  (adress: /api/admin/login)
+//  SIGN IN  (address: /api/admin/login)
 // ============================================================================
-//  Inloggningsformuläret (app/admin/login/LoginForm.js) skickar mejl och
-//  lösenord hit. Vi:
-//    1. Kontrollerar att mejl och lösenord ser rimliga ut (samma regler som
-//       formuläret, men webbläsaren går inte att lita på).
-//    2. Ber Supabase kontrollera lösenordet.
-//    3. Kontrollerar att kontot är admin. Annars loggas det ut direkt.
-//    4. Sparar inloggningen i cookies.
+//  The sign-in form (app/admin/login/LoginForm.js) sends the email and
+//  password here. We:
+//    1. Check that the email and password look reasonable (the same rules as
+//       the form, but the browser can't be trusted).
+//    2. Ask Supabase to check the password.
+//    3. Check that the account is an admin. Otherwise it is signed out at once.
+//    4. Save the session in cookies.
 // ============================================================================
 
 import { cookies } from "next/headers";
@@ -26,22 +26,22 @@ export async function POST(request) {
     return fail("Invalid request.");
   }
 
-  // 1. Samma kontroll som i formuläret.
+  // 1. The same check as in the form.
   const { values, errors } = validateLogin(body);
   if (errors) return fail("Please check the form.", 400, errors);
 
-  // 2. Rätt lösenord? Samma svar oavsett om mejlen eller lösenordet var fel,
-  //    så att ingen kan ta reda på vilka mejladresser som har konton.
+  // 2. Right password? The same answer whether the email or the password was wrong,
+  //    so nobody can find out which email addresses have accounts.
   const session = await signInWithPassword(values.email, values.password);
   if (!session) return fail("Wrong email or password.", 401);
 
-  // 3. Är kontot admin?
+  // 3. Is the account an admin?
   if (!(await isAdmin(session.access_token))) {
     await signOut(session.access_token);
     return fail("This account doesn't have access to the admin page.", 403);
   }
 
-  // 4. Spara inloggningen.
+  // 4. Save the session.
   saveSession(await cookies(), session);
   return Response.json({ ok: true });
 }

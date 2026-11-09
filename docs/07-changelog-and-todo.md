@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 9 November 2026 – code comments in English
+- Every comment in the code (`app/`, `components/`, `lib/`, `data/`, `proxy.js`, `next.config.mjs`, `app/globals.css`, `supabase/01-setup.sql`, `.gitignore`) was translated from Swedish to English, so the whole project – code, docs and README – is in English.
+- Only comments changed: a check of the diff confirmed that no line of code differs. The one Swedish word left is the name of a database rule (`"Alla får läsa lagret"` in `01-setup.sql`), which has to match the name in Supabase; an English explanation was added next to it.
+- **Tested:** 143 automatic tests pass; `npm run build` passes.
+
 ### 9 November 2026 – Stripe webhook connected on the live site
 - In Stripe (test mode / sandbox), an event destination **"Luna shop – stock"** sends `checkout.session.completed` and `checkout.session.async_payment_succeeded` to `https://luna-shop-ten.vercel.app/api/stripe-webhook`.
 - Its signing secret was added in Vercel as `STRIPE_WEBHOOK_SECRET` (Production), and the site was redeployed.

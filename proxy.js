@@ -1,12 +1,12 @@
 // ============================================================================
-//  PROXY – körs före varje förfrågan till adminsidorna
+//  PROXY – runs before every request to the admin pages
 // ============================================================================
-//  Inloggningen (access token) gäller ungefär en timme. När den har gått ut
-//  hämtar proxyn en ny med hjälp av refresh token, så att Luna förblir
-//  inloggad i upp till 30 dagar utan att behöva skriva lösenordet igen.
+//  The session (access token) lasts about an hour. When it has expired, the
+//  proxy fetches a new one with the refresh token, so Luna stays signed in
+//  for up to 30 days without typing the password again.
 //
-//  Proxyn bestämmer INTE vem som får komma in. Det gör adminsidorna själva,
-//  genom att fråga databasen om kontot är admin (lib/auth.js).
+//  The proxy does NOT decide who gets in. The admin pages do that themselves,
+//  by asking the database whether the account is an admin (lib/auth.js).
 // ============================================================================
 
 import { NextResponse } from "next/server";
@@ -16,19 +16,19 @@ export async function proxy(request) {
   const hasAccess = request.cookies.has(ACCESS_COOKIE);
   const refreshToken = request.cookies.get(REFRESH_COOKIE)?.value;
 
-  // Inloggad och giltig, eller inte inloggad alls: inget att göra.
+  // Signed in and valid, or not signed in at all: nothing to do.
   if (hasAccess || !refreshToken) return NextResponse.next();
 
   const session = await refreshSession(refreshToken);
 
   if (!session) {
-    // Refresh token fungerar inte längre (utloggad eller för gammal): rensa.
+    // The refresh token no longer works (signed out or too old): clear it.
     const response = NextResponse.next();
     clearSession(response.cookies);
     return response;
   }
 
-  // Ge sidan de nya cookies direkt, och spara dem i webbläsaren.
+  // Give the page the new cookies right away, and save them in the browser.
   request.cookies.set(ACCESS_COOKIE, session.access_token);
   request.cookies.set(REFRESH_COOKIE, session.refresh_token);
   const response = NextResponse.next({ request });

@@ -1,12 +1,12 @@
 // ============================================================================
-//  STARTSIDAN  (adress: /)
+//  THE LANDING PAGE  (address: /)
 // ============================================================================
-//  En visuell introduktion innan butiken: Lunas namn och ett tätt rutnät
-//  av bilder i olika storlekar, som i en konstnärsportfolio. Sist en
-//  stor länk in till butiken.
+//  A visual introduction before the shop: Luna's name and a tight grid
+//  of images in different sizes, like an artist portfolio. At the end, a
+//  big link into the shop.
 //
-//  Vilka bilder och videor som visas, och hur stora, ändras i data/home.js.
-//  Själva butiken ligger på /shop (app/shop/page.js).
+//  Which images and videos are shown, and how big, is set in data/home.js.
+//  The shop itself is at /shop (app/shop/page.js).
 // ============================================================================
 
 import Link from "next/link";
@@ -16,7 +16,7 @@ import LoopingVideo from "@/components/LoopingVideo";
 import tiles from "@/data/home";
 import site from "@/data/site";
 
-// Hur stor del av skärmens bredd varje storlek tar (hjälper Next.js välja bildstorlek).
+// How much of the screen width each size takes (helps Next.js pick the image size).
 const SIZES = {
   small: "(max-width: 700px) 50vw, 25vw",
   tall: "(max-width: 700px) 50vw, 25vw",
@@ -25,13 +25,13 @@ const SIZES = {
 };
 
 export default async function HomePage() {
-  // Posterns namn visas när man håller musen över en bild.
+  // The print's name shows when you hover over an image.
   const products = await getProducts();
   const bySlug = Object.fromEntries(products.map((product) => [product.slug, product]));
 
   return (
     <>
-      {/* ---------- Namnet ---------- */}
+      {/* ---------- The name ---------- */}
       <section className="intro">
         <h1 className="intro-name">{site.name}</h1>
         <div className="intro-side">
@@ -51,7 +51,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ---------- Rutnätet med bilder ---------- */}
+      {/* ---------- The image grid ---------- */}
       <section className="tiles" aria-label="Selected work">
         {tiles.map((tile, i) => {
           const product = tile.slug && bySlug[tile.slug];
@@ -73,7 +73,7 @@ export default async function HomePage() {
         })}
       </section>
 
-      {/* ---------- Vidare till butiken ---------- */}
+      {/* ---------- On to the shop ---------- */}
       <section className="enter">
         <Link href="/shop" className="enter-link">
           Enter the shop <span aria-hidden="true">→</span>

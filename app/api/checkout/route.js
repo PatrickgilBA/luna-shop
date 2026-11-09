@@ -1,13 +1,13 @@
 // ============================================================================
-//  KASSAN – körs på SERVERN, inte i kundens webbläsare
+//  THE CHECKOUT – runs on the SERVER, not in the customer's browser
 // ============================================================================
-//  1. Tar emot varukorgen (vilka posters + hur många + frakt-zon).
-//  2. Kontrollerar allt mot produkterna och lagret i Supabase.
-//     Priserna hämtas HÄR, aldrig från webbläsaren – annars skulle en kund
-//     kunna fuska och ändra priset.
-//  3. Ber Stripe skapa en betalsida och skickar tillbaka adressen dit.
+//  1. Receives the cart (which prints + how many + shipping zone).
+//  2. Checks everything against the prints and the stock in Supabase.
+//     The prices are looked up HERE, never taken from the browser – otherwise a
+//     customer could cheat and change the price.
+//  3. Asks Stripe to create a payment page and sends back its address.
 //
-//  Den hemliga Stripe-nyckeln läses från filen .env.local (se docs/05).
+//  The secret Stripe key is read from the .env.local file (see docs/05).
 // ============================================================================
 
 import Stripe from "stripe";
@@ -15,7 +15,7 @@ import { SHIPPING_ZONES } from "@/lib/shipping";
 import { getProducts } from "@/lib/products";
 import { MAX_PER_PRINT } from "@/lib/limits";
 
-// Liten hjälpare för att svara med ett felmeddelande.
+// Small helper to reply with an error message.
 const fail = (message, status = 400) => Response.json({ error: message }, { status });
 
 export async function POST(request) {
@@ -39,10 +39,10 @@ export async function POST(request) {
   const items = Array.isArray(body.items) ? body.items : [];
   if (items.length === 0) return fail("Your cart is empty.");
 
-  // Var hemsidan ligger – behövs för att Stripe ska kunna skicka tillbaka kunden.
+  // Where the site lives – needed so Stripe can send the customer back.
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
 
-  // Hämta de senaste priserna och lagret från Supabase.
+  // Read the latest prices and stock from Supabase.
   let products;
   try {
     products = await getProducts({ fresh: true });
@@ -51,7 +51,7 @@ export async function POST(request) {
     return fail("Could not check the stock. Please try again.", 500);
   }
 
-  // Bygg Stripes lista över varor, och kontrollera varje rad.
+  // Build Stripe's list of items, and check every line.
   const lineItems = [];
   for (const item of items) {
     const product = products.find((p) => p.slug === item.slug);
@@ -70,14 +70,14 @@ export async function POST(request) {
       quantity,
       price_data: {
         currency: "eur",
-        unit_amount: Math.round(product.price * 100), // Stripe räknar i cent
+        unit_amount: Math.round(product.price * 100), // Stripe counts in cents
         product_data: {
           name: `${product.title} – ${product.size}`,
-          // Stripe kan bara visa bilder som ligger på en riktig (https) adress.
+          // Stripe can only show images that live at a real (https) address.
           ...(siteUrl.startsWith("https://") && {
             images: [new URL(product.images[0], siteUrl).toString()],
           }),
-          metadata: { slug: product.slug }, // så att webhooken vet vilken poster som köptes
+          metadata: { slug: product.slug }, // so the webhook knows which print was bought
         },
       },
     });
@@ -98,7 +98,7 @@ export async function POST(request) {
           },
         },
       ],
-      phone_number_collection: { enabled: true }, // Posten vill ofta ha telefonnummer
+      phone_number_collection: { enabled: true }, // the post office often wants a phone number
       success_url: `${siteUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/cart`,
     });

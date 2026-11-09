@@ -1,8 +1,8 @@
 // ============================================================================
-//  LOGGA UT  (adress: /api/admin/logout)
+//  SIGN OUT  (address: /api/admin/logout)
 // ============================================================================
-//  Loggar ut hos Supabase (så att inloggningen inte kan användas igen)
-//  och tar bort cookies.
+//  Signs out at Supabase (so the session can't be used again)
+//  and removes the cookies.
 // ============================================================================
 
 import { cookies } from "next/headers";

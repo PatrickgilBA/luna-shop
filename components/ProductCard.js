@@ -1,4 +1,4 @@
-// Ett kort i butikens rutnät: bild, namn och pris.
+// A card in the shop grid: image, name and price.
 
 import Link from "next/link";
 import Image from "next/image";

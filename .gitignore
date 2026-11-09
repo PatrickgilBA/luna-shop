@@ -1,14 +1,14 @@
-# Saker som installeras/byggs automatiskt – ska inte sparas i git
+# Things that are installed/built automatically – not stored in git
 node_modules/
 .next/
 out/
 
-# Hemliga nycklar (Stripe) – får ALDRIG laddas upp någonstans
+# Secret keys – must NEVER be uploaded anywhere
 .env
 .env.local
 .env*.local
 
-# Originalbilderna är för stora för git (finns kvar på datorn)
+# The original images and videos are too big for git (they stay on the computer)
 Riso print/
 Artist intro pic/
 Batik/
