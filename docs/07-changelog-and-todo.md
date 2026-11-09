@@ -2,6 +2,15 @@
 
 ## Changelog
 
+### 9 November 2026 – image upload
+- New Supabase Storage bucket `product-images` (`supabase/04-storage.sql`): public to read, only admins may upload, replace and delete. Only JPEG, PNG and WebP up to 5 MB.
+- The product form has an **Upload images** button (`components/ImageUpload.js`). Photos are made at most 1600 pixels and saved as JPEG in the browser first (`lib/resize-image.js`), then sent to `/api/admin/images`, which uploads them with the admin's own login. Previews show which image is used in the shop, with a **Remove** button.
+- Images may now only come from the site (`/images/…`) or from the bucket; other addresses are refused, because Next.js couldn't show them. `next.config.mjs` allows the bucket.
+- **Tested:**
+  - In the database with temporary accounts: a visitor and an ordinary account can't upload; an admin can; a text file is refused; everyone can see the image; an ordinary account can't delete, an admin can. (The first try showed that admins also need a "select" rule to delete; it was added.)
+  - In a real browser with a temporary admin: a 32 MB original photo was uploaded in 3.4 s and became 301 kB; the print was saved and the image showed on the product page through Next.js image optimisation. The test print, image and account were deleted afterwards.
+  - 143 automatic tests pass (13 new); `npm run build` passes.
+
 ### 9 November 2026 – add, edit and delete prints from the admin page
 - The admin page has **+ Add a print** and an **Edit** link on every row. The edit page also has **Delete this print**, which asks before deleting.
 - New routes `/api/admin/products` (POST: add) and `/api/admin/products/[slug]` (PATCH: change, DELETE: delete). They only accept a signed-in admin and requests from our own website, and they call Supabase with the admin's own login, so the database's rules (`is_admin()`) decide too.

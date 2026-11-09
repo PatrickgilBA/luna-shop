@@ -18,7 +18,7 @@ The design takes inspiration from artist portfolios such as [eglezvirblyte.com](
 - **Cart** saved in the browser, with shipping zones (EU / worldwide)
 - **Stripe Checkout**: prices and stock are always checked on the server
 - **Prints and stock in Supabase**: name, price, images and stock come from the database. Shows "Sold out" at 0 and goes down after each paid order, through a Stripe webhook and a server-side check on the thank-you page. The same order is never counted twice.
-- **Admin page** at `/admin` (link in the footer): sign in with Supabase Auth, then add, edit and delete prints with forms that are checked in the browser and again on the server. Only accounts on the database's admin list get in, and the database itself refuses changes from anyone else
+- **Admin page** at `/admin` (link in the footer): sign in with Supabase Auth, then add, edit and delete prints with forms that are checked in the browser and again on the server. Images are uploaded straight from the form to Supabase Storage (resized in the browser first). Only accounts on the database's admin list get in, and the database itself refuses changes from anyone else
 - Responsive layout, semantic HTML, keyboard focus styles, alt texts, and respect for "reduce motion"
 
 ---
@@ -32,7 +32,7 @@ You need **Node.js** (version 20 or later).
    npm install
    ```
 2. Copy `.env.example` to `.env.local` and fill in your own keys (see below).
-3. Set up the database: in Supabase, open **SQL Editor** and run the files in [`supabase/`](supabase/) in order (`01-setup.sql`, `02-products.sql`, `03-admin.sql`). Then create an admin account under **Authentication → Users** and turn off **Allow new users to sign up** (see [docs/08](docs/08-supabase.md)).
+3. Set up the database: in Supabase, open **SQL Editor** and run the files in [`supabase/`](supabase/) in order (`01-setup.sql` … `04-storage.sql`). Then create an admin account under **Authentication → Users** and turn off **Allow new users to sign up** (see [docs/08](docs/08-supabase.md)).
 4. Start the development server:
    ```
    npm run dev
@@ -62,12 +62,13 @@ To test a purchase, use Stripe's test card `4242 4242 4242 4242`, any future dat
 npm test
 ```
 
-runs 130 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
+runs 143 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
 
 - **`data.test.js`**: the prints in `supabase/02-products.sql` have unique slugs and existing images, the landing page grid has no gaps, shipping zones don't overlap.
 - **`products.test.js`**: reading prints from Supabase, lowering the stock after an order, and only refreshing the pages when an order is new.
 - **`auth.test.js`**: login form validation, the login and logout routes (wrong password, non-admin accounts, other websites), and the proxy that renews the login.
 - **`admin-products.test.js`**: the product form rules, and adding, changing and deleting prints (only for admins, never with bad data).
+- **`images.test.js`**: image upload (only admins, only JPEG/PNG/WebP up to 4 MB).
 - **`api.test.js`**: the checkout (server prices, stock, max 10 per print, invalid input), the thank-you page check and the Stripe webhook (signatures, unpaid orders, retries).
 
 Stripe and Supabase are replaced by fakes in the tests, so they never create payments or change the real stock.
@@ -106,7 +107,7 @@ Customer pays on Stripe  ◀─────────────────�
 │   ├── cart/, success/, about/
 │   ├── admin/              ← admin page, login and product forms (only for admins)
 │   └── api/                ← checkout, products, confirm-order, stripe-webhook, admin/…
-├── components/             ← reusable React components (header, cart, video …)
+├── components/             ← reusable React components (header, cart, video, form field, image upload …)
 ├── data/
 │   ├── home.js             ← which images and videos are on the landing page
 │   └── site.js             ← name, email, Instagram, About text
@@ -114,6 +115,7 @@ Customer pays on Stripe  ◀─────────────────�
 │   ├── products.js         ← reads the prints and stock from Supabase
 │   ├── auth.js             ← admin login with Supabase Auth
 │   ├── admin-api.js        ← shared checks for the admin routes
+│   ├── resize-image.js     ← makes photos smaller in the browser before upload
 │   ├── validation.js       ← form rules, shared by the browser and the server
 │   ├── orders.js           ← lowers stock after a paid order
 │   ├── limits.js           ← max prints of the same kind per order

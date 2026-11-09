@@ -20,6 +20,7 @@ The SQL that created them is in [`supabase/`](../supabase/):
 | `01-setup.sql` | 9 Nov 2026 | The first stock table, `processed_orders` and the `process_order` function |
 | `02-products.sql` | 9 Nov 2026 | The `products` table with the 24 prints; stock moved into it |
 | `03-admin.sql` | 9 Nov 2026 | The `admins` table, the `is_admin()` function, and rules that let admins change products |
+| `04-storage.sql` | 9 Nov 2026 | The `product-images` storage bucket, and rules that let only admins upload and delete images |
 
 Run them in that order, once, in **SQL Editor → Run**, to set up a new Supabase project. Never run them again in the same project.
 
@@ -50,6 +51,17 @@ The admin signs in at **/admin/login** with an email and password. The accounts 
 
 ### Remove an admin
 Delete the account under **Authentication → Users**. It disappears from `admins` automatically.
+
+## Images (Supabase Storage)
+
+Images uploaded on the admin page are stored in the **`product-images` bucket** (Supabase → **Storage**).
+- **Everyone** can see an image through its public address (it is shown in the shop).
+- **Only admins** can upload, replace or delete images. Others get "violates row-level security policy". This was tested.
+- Only **JPEG, PNG and WebP** up to **5 MB** are accepted by the bucket (the site itself allows 4 MB, and makes photos smaller before upload).
+- Each image gets a unique name (date + random id), so two uploads never overwrite each other.
+- `next.config.mjs` allows Next.js to show images from this bucket, and no other outside address.
+
+Deleting a print doesn't delete its images from the bucket. They take little space, but they can be removed under **Storage → product-images**.
 
 ## How a purchase lowers the stock
 

@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { validateProduct } from "@/lib/validation";
 import FormField from "@/components/FormField";
+import ImageUpload from "@/components/ImageUpload";
 
 const EMPTY = { slug: "", title: "", size: "", price: "", description: "", images: "", stock: "", sort_order: "" };
 
@@ -29,6 +30,11 @@ function toForm(product, nextSortOrder) {
     stock: String(product.stock),
     sort_order: String(product.sort_order ?? 0),
   };
+}
+
+// Bildfältet är text med en adress per rad; här blir det en lista.
+function toList(text) {
+  return text.split("\n").map((line) => line.trim()).filter(Boolean);
 }
 
 // Gör om en titel till en slug: "Blue Cat!" → "blue-cat".
@@ -103,7 +109,17 @@ export default function ProductForm({ product, nextSortOrder }) {
     }
   }
 
-  const images = form.images.split("\n").map((line) => line.trim()).filter(Boolean);
+  const images = toList(form.images);
+
+  // Ändra bildlistan (uppladdning eller "Remove"). Tar emot en lista eller en
+  // funktion, så att flera uppladdningar i rad inte skriver över varandra.
+  function setImages(next) {
+    setForm((current) => {
+      const list = typeof next === "function" ? next(toList(current.images)) : next;
+      return { ...current, images: list.join("\n") };
+    });
+    setErrors((current) => ({ ...current, images: undefined }));
+  }
 
   return (
     <form className="form product-form" onSubmit={handleSubmit} noValidate>
@@ -148,23 +164,36 @@ export default function ProductForm({ product, nextSortOrder }) {
         <textarea rows={3} value={form.description} onChange={(e) => update("description", e.target.value)} onBlur={() => check("description")} />
       </FormField>
 
-      <FormField
-        label="Images"
-        id="images"
-        error={errors.images}
-        hint="One per line, for example /images/products/moth-1.jpg. The first one is shown in the shop."
-      >
-        <textarea rows={3} value={form.images} onChange={(e) => update("images", e.target.value)} onBlur={() => check("images")} />
-      </FormField>
+      <fieldset className={errors.images ? "images-field field--error" : "images-field"}>
+        <legend>Images</legend>
+        <p className="field-hint">The first image is shown in the shop.</p>
 
-      {images.length > 0 && (
-        <div className="image-previews" aria-label="Image preview">
-          {images.slice(0, 10).map((src) => (
-            // Vanlig <img> här: adressen skrivs just nu och kanske inte finns än.
-            <img key={src} src={src} alt="" />
-          ))}
-        </div>
-      )}
+        {images.length > 0 && (
+          <ul className="image-previews">
+            {images.map((src, index) => (
+              <li key={src}>
+                {/* Vanlig <img> här: adressen kan ha skrivits för hand och kanske inte finns. */}
+                <img src={src} alt={`Image ${index + 1}`} />
+                {index === 0 && <span className="image-badge">In the shop</span>}
+                <button type="button" className="image-remove" onClick={() => setImages(images.filter((s) => s !== src))}>
+                  Remove<span className="visually-hidden"> image {index + 1}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <ImageUpload onUploaded={(url) => setImages((current) => [...current, url])} />
+
+        <details className="image-addresses">
+          <summary>Image addresses (advanced)</summary>
+          <FormField label="One address per line" id="images" hint="For example /images/products/moth-1.jpg">
+            <textarea rows={3} value={form.images} onChange={(e) => update("images", e.target.value)} onBlur={() => check("images")} />
+          </FormField>
+        </details>
+
+        {errors.images && <p className="field-error">{errors.images}</p>}
+      </fieldset>
 
       <FormField label="Order in the shop" id="sort_order" error={errors.sort_order} hint="Lowest number first.">
         <input inputMode="numeric" value={form.sort_order} onChange={(e) => update("sort_order", e.target.value)} onBlur={() => check("sort_order")} />
