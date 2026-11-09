@@ -1,0 +1,864 @@
+/* ============================================================================
+   DESIGN / UTSEENDE
+   ============================================================================
+   CSS bestämmer hur allt ser ut: färger, typsnitt, storlekar, avstånd.
+
+   Vill du byta färger? Ändra bara värdena under :root här nedanför –
+   de används överallt på sidan.
+
+   Stilen är lugn och "redaktionell", som en konstnärsportfolio: ljust papper,
+   mycket luft, bilderna får ta plats. Riso-blått är accentfärgen.
+   ============================================================================ */
+
+:root {
+  --blue: #0078bf; /* riso-blått – accentfärgen */
+  --pink: #ff48b0;
+  --yellow: #ffe800;
+  --orange: #ff6c2f;
+
+  --paper: #faf7f2; /* bakgrund – som riso-papper */
+  --tint: #efe9df; /* bakom bilder medan de laddas */
+  --ink: #161616; /* text */
+  --ink-soft: #5c5a57;
+  --line: rgba(22, 22, 22, 0.14); /* tunna linjer */
+
+  --radius: 6px;
+  --gutter: clamp(16px, 4vw, 56px); /* avstånd i kanterna, växer med skärmen */
+
+  --font-display: "Ultra", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+}
+
+/* ---------- Grundinställningar ---------- */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+main {
+  min-height: 60vh;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  display: block;
+}
+
+h1,
+h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4em;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* Små rubriker/etiketter i versaler. */
+.nav,
+.arrow-link {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ---------- Meny ---------- */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px var(--gutter);
+  background: var(--paper);
+  border-bottom: 1px solid var(--line);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: var(--blue);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 36px);
+}
+
+.nav a {
+  text-decoration: none;
+  padding: 4px 0;
+  border-bottom: 1.5px solid transparent;
+}
+
+.nav a:hover,
+.nav a.active {
+  border-bottom-color: currentColor;
+}
+
+.cart-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.7em;
+  height: 1.7em;
+  padding: 0 0.45em;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.9em;
+  letter-spacing: 0;
+}
+
+/* ---------- Rullande text ---------- */
+
+.marquee {
+  overflow: hidden;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  white-space: pre;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  padding: 7px 0;
+  animation: scroll 50s linear infinite;
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ---------- Startsidan: namnet ---------- */
+
+.intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 40px;
+  padding: clamp(28px, 4vw, 56px) var(--gutter) clamp(20px, 2.5vw, 32px);
+}
+
+.intro-name {
+  margin: 0;
+  font-size: clamp(3.5rem, 11vw, 9.5rem);
+  line-height: 0.85;
+  letter-spacing: -0.03em;
+}
+
+.intro-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 8px;
+}
+
+.intro-side p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.intro-links {
+  display: flex;
+  gap: 20px;
+}
+
+.arrow-link {
+  text-decoration: none;
+  border-bottom: 1.5px solid currentColor;
+  padding-bottom: 2px;
+}
+
+.arrow-link:hover {
+  color: var(--blue);
+}
+
+/* ---------- Startsidan: rutnätet med bilder ---------- */
+/* Fyra kolumner med fyrkantiga rutor och smala mellanrum. Varje bild tar
+   1 eller 2 rutor åt varje håll (size i data/home.js). "dense" gör att
+   bilderna pusslas ihop så att det inte blir hål. */
+
+.tiles {
+  --cols: 4;
+  --gap: clamp(6px, 0.8vw, 12px);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 1fr);
+  grid-auto-rows: calc((100vw - 2 * var(--gutter) - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  grid-auto-flow: dense;
+  gap: var(--gap);
+  padding: 0 var(--gutter) var(--gutter);
+}
+
+.tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: var(--tint);
+  text-decoration: none;
+}
+
+.tile--big { grid-column: span 2; grid-row: span 2; }
+.tile--tall { grid-row: span 2; }
+.tile--wide { grid-column: span 2; }
+
+.tile img,
+.tile video {
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Videorna fyller rutan precis som bilderna. */
+.tile video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Titeln syns när man håller musen över bilden. */
+.tile-caption {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.2vw, 2.2rem);
+  line-height: 1.05;
+  color: #fff;
+  background: rgba(0, 120, 191, 0.82); /* riso-blått */
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.tile:hover .tile-caption,
+.tile:focus-visible .tile-caption {
+  opacity: 1;
+}
+
+.tile:hover img,
+.tile:hover video {
+  transform: scale(1.04);
+}
+
+/* På mobil: två kolumner, och titeln syns som en liten etikett längst ner
+   (det finns ingen mus att hålla över bilden med). */
+@media (max-width: 700px) {
+  .tiles {
+    --cols: 2;
+  }
+}
+
+@media (hover: none) {
+  .tile-caption {
+    inset: auto 0 0 0;
+    display: block;
+    padding: 6px 10px;
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.45));
+    opacity: 1;
+  }
+}
+
+/* ---------- Startsidan: vidare till butiken ---------- */
+
+.enter {
+  background: var(--blue);
+  color: #fff;
+  padding: clamp(64px, 12vw, 160px) var(--gutter);
+  text-align: center;
+}
+
+.enter-link {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 10vw, 9rem);
+  line-height: 1;
+  text-decoration: none;
+  transition: transform 0.3s;
+}
+
+.enter-link:hover {
+  transform: translateX(12px);
+}
+
+.enter p {
+  margin: 20px 0 0;
+}
+
+/* Respektera de som har stängt av animationer i sin dator. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* ---------- Butikens rubrik ---------- */
+
+.shop-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 40px;
+  padding: clamp(40px, 7vw, 96px) var(--gutter) 32px;
+}
+
+.shop-intro h1 {
+  font-size: clamp(3.4rem, 12vw, 10rem);
+  margin: 0;
+}
+
+.shop-intro p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+/* ---------- Butikens rutnät ---------- */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: clamp(32px, 4vw, 56px) clamp(14px, 2vw, 28px);
+  padding: 24px var(--gutter) 96px;
+  border-top: 1px solid var(--line);
+}
+
+/* På mobil: två kolumner. */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card {
+  display: block;
+  text-decoration: none;
+}
+
+.card-image {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--tint);
+}
+
+.card-image img {
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.card:hover .card-image img {
+  transform: scale(1.04);
+}
+
+.card-info {
+  padding: 10px 0 0;
+}
+
+.card-info h2 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.card:hover .card-info h2 {
+  color: var(--blue);
+}
+
+.card-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* ---------- Knappar och små länkar ---------- */
+
+.button {
+  display: inline-block;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 14px 30px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background: var(--blue);
+  border-color: var(--blue);
+}
+
+.button:disabled {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+}
+
+.button--big {
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+.small-link {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 10px 0;
+}
+
+.note {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.error {
+  background: #ffe9e9;
+  border: 1px solid #c00;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  color: #900;
+}
+
+/* ---------- Produktsida ---------- */
+
+.product {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: clamp(24px, 5vw, 80px);
+  padding: 40px var(--gutter) 96px;
+  align-items: start;
+}
+
+@media (max-width: 800px) {
+  .product {
+    grid-template-columns: 1fr;
+    padding-top: 24px;
+  }
+}
+
+.gallery-main {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--tint);
+}
+
+.gallery-main img {
+  object-fit: cover;
+}
+
+.gallery-thumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.thumb {
+  position: relative;
+  width: 72px;
+  height: 90px;
+  padding: 0;
+  border: none;
+  border-bottom: 2px solid transparent;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--tint);
+  opacity: 0.55;
+  transition: opacity 0.2s;
+}
+
+.thumb img {
+  object-fit: cover;
+}
+
+.thumb.selected,
+.thumb:hover {
+  opacity: 1;
+}
+
+.thumb.selected {
+  border-bottom-color: var(--ink);
+}
+
+.product-info {
+  position: sticky;
+  top: 96px;
+}
+
+.price {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  color: var(--blue);
+  margin: 0 0 16px;
+}
+
+.details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 24px;
+  padding: 16px 0;
+  margin: 24px 0 28px;
+  border-block: 1px solid var(--line);
+  font-size: 0.95rem;
+}
+
+.details dt {
+  font-weight: 600;
+}
+
+.details dd {
+  margin: 0;
+}
+
+.add-to-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Antalsväljaren (− 1 +) bredvid "Add to cart". */
+.add-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.add-row .quantity span {
+  min-width: 1.5em;
+  text-align: center;
+}
+
+.low-stock {
+  color: var(--orange);
+  font-weight: 600;
+  margin: 4px 0 0;
+}
+
+/* ---------- About ---------- */
+
+.about {
+  padding: 48px var(--gutter) 96px;
+}
+
+.about-main {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(24px, 6vw, 96px);
+  align-items: center;
+}
+
+@media (max-width: 800px) {
+  .about-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+.about-photo {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: 999px 999px 0 0; /* bågform upptill */
+  overflow: hidden;
+  background: var(--tint);
+}
+
+.about-photo img,
+.about-strip-photo img {
+  object-fit: cover;
+}
+
+.about-text {
+  font-size: 1.15rem;
+}
+
+.about-text h1 {
+  font-size: clamp(3rem, 9vw, 7rem);
+}
+
+/* Tre bilder i olika storlekar och höjder, som i kollaget på startsidan. */
+.about-strip {
+  display: grid;
+  grid-template-columns: 4fr 3fr 5fr;
+  gap: clamp(16px, 2.2vw, 36px);
+  align-items: start;
+  margin-top: clamp(64px, 10vw, 140px);
+}
+
+@media (max-width: 800px) {
+  .about-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.about-strip-photo {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--tint);
+}
+
+@media (min-width: 801px) {
+  .about-strip-photo:nth-child(2) { margin-top: 120px; }
+  .about-strip-photo:nth-child(3) { aspect-ratio: 3 / 2; margin-top: 40px; }
+}
+
+/* ---------- Varukorg ---------- */
+
+.cart {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px var(--gutter) 96px;
+}
+
+.cart-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px;
+  border-top: 1px solid var(--line);
+}
+
+.cart-line {
+  display: grid;
+  grid-template-columns: 96px 1fr auto auto;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 600px) {
+  .cart-line {
+    grid-template-columns: 72px 1fr;
+  }
+  .cart-line .quantity,
+  .cart-line .remove {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+
+.cart-thumb {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--tint);
+}
+
+.cart-thumb img {
+  object-fit: cover;
+}
+
+.cart-line-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-line-info a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.quantity button {
+  width: 34px;
+  height: 34px;
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.quantity button:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.quantity button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.remove {
+  font: inherit;
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+
+.cart-summary {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 36px);
+}
+
+.zones {
+  border: none;
+  padding: 0;
+  margin: 0 0 20px;
+}
+
+.zones legend {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.zone {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.zone.selected {
+  border-color: var(--blue);
+  background: #eaf3fa;
+}
+
+.zone input {
+  margin-top: 5px;
+  accent-color: var(--blue);
+}
+
+.zone small {
+  display: block;
+  color: var(--ink-soft);
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  margin: 0 0 20px;
+}
+
+.totals dd {
+  margin: 0;
+  text-align: right;
+}
+
+.totals .total {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  padding-top: 10px;
+}
+
+/* ---------- Enkla meddelandesidor (tom varukorg, tack, 404) ---------- */
+
+.message-page {
+  min-height: 55vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px var(--gutter);
+}
+
+/* ---------- Sidfot ---------- */
+
+.footer {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 40px var(--gutter);
+  border-top: 1px solid var(--line);
+}
+
+.footer p {
+  margin: 4px 0;
+}
+
+.footer a:hover {
+  color: var(--blue);
+}

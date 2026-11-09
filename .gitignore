@@ -1,0 +1,18 @@
+# Saker som installeras/byggs automatiskt – ska inte sparas i git
+node_modules/
+.next/
+out/
+
+# Hemliga nycklar (Stripe) – får ALDRIG laddas upp någonstans
+.env
+.env.local
+.env*.local
+
+# Originalbilderna är för stora för git (finns kvar på datorn)
+Riso print/
+Artist intro pic/
+Batik/
+IKEA/
+Videor Luna/
+
+.DS_Store
