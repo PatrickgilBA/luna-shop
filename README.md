@@ -1,73 +1,116 @@
-# Luna – webbshop för riso-posters
+# Luna – online shop for risograph prints
 
-**Börja läsa här.** Den här filen är startpunkten. Allt annat finns i mappen `docs/`.
+An online shop where the artist Luna sells her risograph prints. Visitors can browse the work, add prints to a cart, choose a quantity and pay by card with Stripe. Stock is kept in a Supabase database and goes down automatically after each purchase.
 
-Projektet byggdes **8 oktober 2026**. Det är en webbshop där konstnären Luna säljer sina
-risograph-posters. Kunderna kan bläddra bland posters, lägga dem i en varukorg och betala med kort via Stripe.
+The design takes inspiration from artist portfolios such as [eglezvirblyte.com](https://www.eglezvirblyte.com/): a visual landing page with a tight grid of images and looping videos, before you enter the shop.
 
-Sidan är inspirerad av [junioneda.com](https://www.junioneda.com/) och
-[eglezvirblyte.com](https://www.eglezvirblyte.com/), fast med en mer färgglad och lekfull stil.
+**Built with:** Next.js 16 (App Router) · React 19 · Supabase (PostgreSQL) · Stripe Checkout · plain CSS · JavaScript
 
 ---
 
-## Dokumentationen (läs i den här ordningen)
+## Features
 
-| Fil | Vad den handlar om |
-|---|---|
-| [docs/01-krav-fran-intervjun.md](docs/01-krav-fran-intervjun.md) | Vad vi bestämde i intervjun, och varför |
-| [docs/02-ordlista.md](docs/02-ordlista.md) | Förklaring av alla tekniska ord (React, Next, Stripe …) |
-| [docs/03-hur-sidan-ar-byggd.md](docs/03-hur-sidan-ar-byggd.md) | Vilka filer som gör vad |
-| [docs/04-andra-produkter.md](docs/04-andra-produkter.md) | **Den du behöver oftast:** byta pris, lägga till poster, markera slutsåld |
-| [docs/05-stripe-betalning.md](docs/05-stripe-betalning.md) | Så kopplar du in betalningen |
-| [docs/06-publicera-pa-internet.md](docs/06-publicera-pa-internet.md) | Så lägger du ut sidan på internet |
-| [docs/07-logg-och-att-gora.md](docs/07-logg-och-att-gora.md) | Vad som är gjort, och vad som återstår |
+- **Landing page** with a grid of images and looping videos in different sizes
+- **Shop** with every print, and a page per print with a gallery and price
+- **Quantity selector** on the product page, max 10 of the same print per order
+- **Cart** saved in the browser, with shipping zones (EU / worldwide)
+- **Stripe Checkout**: prices and stock are always checked on the server
+- **Stock in Supabase**: shows "Sold out" at 0 and goes down after each paid order, through a Stripe webhook and a server-side check on the thank-you page. The same order is never counted twice.
+- Responsive layout, semantic HTML, keyboard focus styles, alt texts, and respect for "reduce motion"
 
 ---
 
-## Snabbstart: visa sidan på din egen dator
+## Getting started
 
-Du behöver programmet **Node.js** (det fanns redan på datorn när vi började).
+You need **Node.js** (version 20 or later).
 
-1. Öppna programmet **Terminal** (tryck ⌘ + mellanslag och skriv "Terminal").
-2. Gå till projektmappen genom att skriva det här och trycka Enter:
-   ```
-   cd ~/Desktop/"Hemsida Luna 2"
-   ```
-3. **Bara första gången** (eller om mappen `node_modules` saknas):
+1. Install the dependencies:
    ```
    npm install
    ```
-   Det laddar ner React, Next.js och Stripe, ungefär en minut.
-4. Starta sidan:
+2. Copy `.env.example` to `.env.local` and fill in your own keys (see below).
+3. Set up the database: in Supabase, open **SQL Editor**, paste the contents of [`supabase/setup.sql`](supabase/setup.sql) and click **Run**.
+4. Start the development server:
    ```
    npm run dev
    ```
-5. Öppna webbläsaren och gå till adressen som står i terminalen, oftast **http://localhost:3000**.
-   Om ett annat projekt redan använder 3000 väljer Next själv till exempel 3001. Titta i terminalen.
-6. Stäng av sidan genom att klicka i terminalen och trycka **Ctrl + C**.
+5. Open the address shown in the terminal, usually **http://localhost:3000**.
 
-Medan `npm run dev` är igång uppdateras sidan i webbläsaren direkt varje gång du sparar en fil.
+To test a purchase, use Stripe's test card `4242 4242 4242 4242`, any future date and any CVC.
+
+### Environment variables
+
+| Name | What it is | Secret? |
+|---|---|---|
+| `STRIPE_SECRET_KEY` | Stripe secret key (`sk_test_…` for testing) | **Yes** |
+| `STRIPE_WEBHOOK_SECRET` | Signing secret of the Stripe webhook (`whsec_…`) | **Yes** |
+| `NEXT_PUBLIC_SITE_URL` | The site's address, e.g. `http://localhost:3000` | No |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | No |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key, can only **read** stock | No |
+| `SUPABASE_SECRET_KEY` | Supabase secret key, used only on the server | **Yes** |
+
+`.env.local` is in `.gitignore` and is never uploaded.
 
 ---
 
-## Mappen i korthet
+## How a purchase works
 
 ```
-Hemsida Luna 2/
-├── README.md            ← den här filen
-├── docs/                ← all dokumentation
-├── data/
-│   ├── products.js      ← ALLA POSTERS (namn, pris, bilder)
-│   ├── home.js          ← bilderna på startsidan
-│   └── site.js          ← mejl, Instagram, About-texten
-├── lib/shipping.js      ← fraktpriser
-├── lib/inventory.js     ← lagret, hämtas från Supabase (se docs/08)
-├── supabase/setup.sql   ← så skapades databasen
-├── app/                 ← sidorna (startsida, produktsida, About, varukorg …)
-├── components/          ← byggklossar som används på flera sidor
-├── public/images/       ← bilderna som visas på sidan (förminskade)
-├── Riso print/          ← originalbilderna (rörs inte, används inte direkt)
-├── Artist intro pic/    ← originalporträtten (rörs inte)
-├── Batik/, IKEA/        ← fanns i mappen innan, används inte av sidan
-└── .env.example         ← mall för hemliga nycklar (se docs/05)
+Browser                         Server (Next.js)                    Stripe / Supabase
+───────                         ────────────────                    ─────────────────
+Add to cart (saved in browser)
+Checkout  ──────────────────▶   /api/checkout
+                                • checks prints exist
+                                • checks quantity ≤ stock ──────▶   Supabase: read stock
+                                • looks up the real prices
+                                • creates a payment page ───────▶   Stripe Checkout
+Customer pays on Stripe  ◀──────────────────────────────────────    redirect to /success
+/success ───────────────────▶   /api/confirm-order
+                                • asks Stripe: is it paid? ─────▶   Stripe
+                                • lowers the stock ─────────────▶   Supabase: process_order
+                                /api/stripe-webhook  ◀───────────   Stripe "payment completed"
+                                (same function, counted only once)
 ```
+
+---
+
+## Project structure
+
+```
+├── app/                    ← pages and API routes (Next.js App Router)
+│   ├── page.js             ← landing page
+│   ├── shop/               ← shop and product pages
+│   ├── cart/, success/, about/
+│   └── api/                ← checkout, stock, confirm-order, stripe-webhook
+├── components/             ← reusable React components (header, cart, video …)
+├── data/
+│   ├── products.js         ← all prints (name, price, size, images)
+│   ├── home.js             ← which images and videos are on the landing page
+│   └── site.js             ← name, email, Instagram, About text
+├── lib/
+│   ├── inventory.js        ← reads and updates stock in Supabase
+│   ├── orders.js           ← lowers stock after a paid order
+│   ├── limits.js           ← max prints of the same kind per order
+│   ├── shipping.js         ← shipping zones and prices
+│   └── format.js           ← price formatting
+├── supabase/setup.sql      ← database tables, security rules and function
+├── public/                 ← images and videos shown on the site
+└── docs/                   ← detailed documentation (in Swedish)
+```
+
+---
+
+## Documentation
+
+The detailed guides in [`docs/`](docs/) are written in Swedish, for the shop owner:
+
+| File | Topic |
+|---|---|
+| [01-krav-fran-intervjun.md](docs/01-krav-fran-intervjun.md) | Requirements from the interview with the client |
+| [02-ordlista.md](docs/02-ordlista.md) | Glossary of technical terms |
+| [03-hur-sidan-ar-byggd.md](docs/03-hur-sidan-ar-byggd.md) | How the site is built, file by file |
+| [04-andra-produkter.md](docs/04-andra-produkter.md) | Changing prints and prices |
+| [05-stripe-betalning.md](docs/05-stripe-betalning.md) | Setting up Stripe payments |
+| [06-publicera-pa-internet.md](docs/06-publicera-pa-internet.md) | Publishing the site |
+| [07-logg-och-att-gora.md](docs/07-logg-och-att-gora.md) | Changelog and to-do list |
+| [08-supabase-lager.md](docs/08-supabase-lager.md) | Stock in Supabase and the Stripe webhook |
