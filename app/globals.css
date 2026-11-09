@@ -833,6 +833,139 @@ h1 {
   padding-top: 10px;
 }
 
+/* ---------- Formulär (inloggning och admin) ---------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.field input,
+.field textarea,
+.field select {
+  font: inherit;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--ink);
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 0;
+  border-color: var(--blue);
+}
+
+.field--error input,
+.field--error textarea,
+.field--error select {
+  border-color: #c00;
+}
+
+.field-error {
+  margin: 0;
+  color: #b00;
+  font-size: 0.9rem;
+}
+
+.button--light {
+  background: transparent;
+  color: var(--ink);
+}
+
+.button--light:hover:not(:disabled) {
+  color: #fff;
+}
+
+/* ---------- Admin ---------- */
+
+.admin-login {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 96px) var(--gutter);
+}
+
+.admin {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px var(--gutter) 96px;
+}
+
+.admin-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-top h1 {
+  margin: 0;
+}
+
+.admin-top .note {
+  margin: 6px 0 0;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.admin-table caption {
+  text-align: left;
+  color: var(--ink-soft);
+  padding-bottom: 12px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-table th {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-table .number {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-table .sold-out {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+/* På mobil: tabellen kan rullas i sidled i stället för att trycka ut sidan. */
+@media (max-width: 600px) {
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 /* ---------- Enkla meddelandesidor (tom varukorg, tack, 404) ---------- */
 
 .message-page {

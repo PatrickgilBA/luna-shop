@@ -2,6 +2,18 @@
 
 ## Changelog
 
+### 9 November 2026 – admin login
+- An admin account (pgil@itba.edu.ar) was created in Supabase Auth, and public sign-ups were turned off.
+- New table `admins`, function `is_admin()` and Row Level Security rules: only admins may add, change and delete prints (`supabase/03-admin.sql`).
+- New pages `/admin/login` (sign-in form) and `/admin` (every print with price and stock), and routes `/api/admin/login` and `/api/admin/logout`.
+- The form is checked in the browser and again on the server, with the same rules (`lib/validation.js`). Errors are shown under each field and read out by screen readers.
+- The login is kept in httpOnly cookies and renewed by `proxy.js` (Next.js 16's name for middleware). Admin routes refuse requests from other websites.
+- **Tested:**
+  - In the database, with temporary accounts: an ordinary account can't change a price, add a print or make itself admin; an admin can add, change and delete a print, but not set the price to 0. The temporary accounts were deleted.
+  - Public sign-up is refused ("Signups not allowed").
+  - In a real browser, with temporary accounts: a visitor who isn't signed in is sent to the login; empty fields, a bad email and a wrong password show the right messages; an ordinary account is refused; the admin gets in and sees 24 prints; the login is renewed when it expires; signing out works. The temporary accounts were deleted.
+  - 92 automatic tests pass (20 new for the login); `npm run build` passes.
+
 ### 9 November 2026 – the prints moved to Supabase
 - New table `products` in Supabase with every print: slug, title, size, price, description, images, stock and sort order (`supabase/02-products.sql`). The 24 prints were generated straight from the old `data/products.js`, and the stock was copied over.
 - Row Level Security: everyone may read products, nobody may change them with the public key. The database refuses empty names, prices ≤ 0, negative stock and invalid slugs.

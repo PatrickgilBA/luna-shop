@@ -41,7 +41,7 @@ Change `sort_order`. Prints are shown from the lowest number to the highest. The
 
 The new print shows in the shop within a minute, and gets its own page at `/shop/new-name`.
 
-*Coming soon: an admin page on the site with a form for this, including image upload.*
+*Coming soon: forms on the admin page (`/admin`) for this, including image upload. Today the admin page shows every print with its price and stock.*
 
 ## Remove a print
 Right-click the row → **Delete row**. It disappears from the shop within a minute. If someone has it in their cart, it is removed from the cart.
