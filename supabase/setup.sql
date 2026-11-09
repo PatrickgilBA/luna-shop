@@ -5,7 +5,7 @@
 --  den 9 november 2026. Den sparas här så att det går att se
 --  hur databasen är uppbyggd, eller bygga upp den igen i ett
 --  nytt Supabase-projekt. Kör den INTE igen i samma projekt.
---  Läs docs/08-supabase-lager.md.
+--  Läs docs/08-supabase-stock.md.
 -- ============================================================
 
 -- 1. Tabellen: en rad per poster. "slug" är samma som i data/products.js.

@@ -22,7 +22,7 @@ const fail = (message, status = 400) => Response.json({ error: message }, { stat
 export async function POST(request) {
   if (!process.env.STRIPE_SECRET_KEY) {
     return fail(
-      "Payments are not set up yet (missing Stripe key). See docs/05-stripe-betalning.md.",
+      "Payments are not set up yet (missing Stripe key). See docs/05-stripe-payments.md.",
       500
     );
   }

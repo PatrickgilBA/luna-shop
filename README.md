@@ -95,22 +95,22 @@ Customer pays on Stripe  ◀─────────────────�
 │   └── format.js           ← price formatting
 ├── supabase/setup.sql      ← database tables, security rules and function
 ├── public/                 ← images and videos shown on the site
-└── docs/                   ← detailed documentation (in Swedish)
+└── docs/                   ← detailed documentation
 ```
 
 ---
 
 ## Documentation
 
-The detailed guides in [`docs/`](docs/) are written in Swedish, for the shop owner:
+Detailed guides are in [`docs/`](docs/):
 
 | File | Topic |
 |---|---|
-| [01-krav-fran-intervjun.md](docs/01-krav-fran-intervjun.md) | Requirements from the interview with the client |
-| [02-ordlista.md](docs/02-ordlista.md) | Glossary of technical terms |
-| [03-hur-sidan-ar-byggd.md](docs/03-hur-sidan-ar-byggd.md) | How the site is built, file by file |
-| [04-andra-produkter.md](docs/04-andra-produkter.md) | Changing prints and prices |
-| [05-stripe-betalning.md](docs/05-stripe-betalning.md) | Setting up Stripe payments |
-| [06-publicera-pa-internet.md](docs/06-publicera-pa-internet.md) | Publishing the site |
-| [07-logg-och-att-gora.md](docs/07-logg-och-att-gora.md) | Changelog and to-do list |
-| [08-supabase-lager.md](docs/08-supabase-lager.md) | Stock in Supabase and the Stripe webhook |
+| [01-requirements.md](docs/01-requirements.md) | Requirements from the interview with the client |
+| [02-glossary.md](docs/02-glossary.md) | Glossary of technical terms |
+| [03-how-the-site-is-built.md](docs/03-how-the-site-is-built.md) | How the site is built, file by file |
+| [04-editing-products.md](docs/04-editing-products.md) | Changing prints and prices |
+| [05-stripe-payments.md](docs/05-stripe-payments.md) | Setting up Stripe payments |
+| [06-publishing.md](docs/06-publishing.md) | Publishing the site |
+| [07-changelog-and-todo.md](docs/07-changelog-and-todo.md) | Changelog and to-do list |
+| [08-supabase-stock.md](docs/08-supabase-stock.md) | Stock in Supabase and the Stripe webhook |

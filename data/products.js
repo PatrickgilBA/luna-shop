@@ -6,11 +6,11 @@
 //    - byta namn, pris, storlek eller beskrivning på en poster
 //    - lägga till eller ta bort en poster
 //
-//  Läs docs/04-andra-produkter.md för en steg-för-steg-guide.
+//  Läs docs/04-editing-products.md för en steg-för-steg-guide.
 //
 //  LAGRET (hur många som finns kvar) ligger INTE här, utan i databasen
 //  Supabase, i tabellen "inventory". Där räknas det ner automatiskt vid köp.
-//  En ny poster måste därför också läggas till där – se docs/08-supabase-lager.md.
+//  En ny poster måste därför också läggas till där – se docs/08-supabase-stock.md.
 //
 //  Varje poster är ett "objekt" mellan { och }. Fälten betyder:
 //
