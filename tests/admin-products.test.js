@@ -58,11 +58,12 @@ afterEach(() => {
 describe("validateProduct", () => {
   it("accepts a valid print and turns the text fields into numbers and a list", () => {
     const { values, errors } = validateProduct({ ...VALID, price: "30,50", images: "/a.jpg\n\n/images/b.jpg\n" }, { isNew: true });
-    expect(errors).toEqual({ images: "Each image must start with /images/ or https://" });
+    expect(errors).toEqual({ images: "Use images from the site (/images/…) or uploaded with the button." });
 
-    const ok = validateProduct({ ...VALID, price: "30,50", images: " /images/a.jpg \n\nhttps://x.supabase.co/b.jpg\n" }, { isNew: true });
+    const uploaded = "https://example.supabase.co/storage/v1/object/public/product-images/2026-11-09-abc.jpg";
+    const ok = validateProduct({ ...VALID, price: "30,50", images: ` /images/a.jpg \n\n${uploaded}\n` }, { isNew: true });
     expect(ok.errors).toBeNull();
-    expect(ok.values).toMatchObject({ price: 30.5, stock: 5, sort_order: 250, images: ["/images/a.jpg", "https://x.supabase.co/b.jpg"] });
+    expect(ok.values).toMatchObject({ price: 30.5, stock: 5, sort_order: 250, images: ["/images/a.jpg", uploaded] });
     expect(values.slug).toBe("blue-cat");
   });
 
@@ -81,7 +82,10 @@ describe("validateProduct", () => {
     ["price", { price: "20000" }, /at most €10,000/],
     ["description", { description: "x".repeat(1001) }, /under 1,000/],
     ["images", { images: "" }, /at least one image/],
-    ["images", { images: "javascript:alert(1)" }, /must start with/],
+    ["images", { images: "javascript:alert(1)" }, /from the site/],
+    ["images", { images: "https://evil.example/cat.jpg" }, /from the site/],
+    ["images", { images: "https://example.supabase.co/storage/v1/object/public/other-bucket/a.jpg" }, /from the site/],
+    ["images", { images: "/images/../.env" }, /from the site/],
     ["stock", { stock: "" }, /how many are in stock/],
     ["stock", { stock: "1.5" }, /whole number/],
     ["stock", { stock: "-1" }, /whole number/],

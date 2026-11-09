@@ -995,18 +995,101 @@ h1 {
   resize: vertical;
 }
 
+.images-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.images-field legend {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0;
+  margin-bottom: 4px;
+}
+
 .image-previews {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: -8px;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.image-previews li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 96px;
 }
 
 .image-previews img {
-  width: 72px;
-  height: 90px;
+  width: 96px;
+  height: 120px;
   object-fit: cover;
   background: var(--tint);
+}
+
+.image-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.image-remove {
+  font: inherit;
+  font-size: 0.85rem;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.image-upload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.image-upload .button {
+  font-size: 0.95rem;
+  padding: 10px 20px;
+}
+
+.image-upload input:focus-visible + .button,
+.image-upload .button:has(+ input:focus-visible) {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.image-upload .is-busy {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.image-addresses summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.image-addresses .field {
+  margin-top: 10px;
 }
 
 .button--danger {
