@@ -18,7 +18,7 @@ The design takes inspiration from artist portfolios such as [eglezvirblyte.com](
 - **Cart** saved in the browser, with shipping zones (EU / worldwide)
 - **Stripe Checkout**: prices and stock are always checked on the server
 - **Prints and stock in Supabase**: name, price, images and stock come from the database. Shows "Sold out" at 0 and goes down after each paid order, through a Stripe webhook and a server-side check on the thank-you page. The same order is never counted twice.
-- **Admin login** at `/admin`: email and password through Supabase Auth, only for accounts on the database's admin list. Form validation in the browser and on the server, sessions in httpOnly cookies that renew themselves
+- **Admin page** at `/admin` (link in the footer): sign in with Supabase Auth, then add, edit and delete prints with forms that are checked in the browser and again on the server. Only accounts on the database's admin list get in, and the database itself refuses changes from anyone else
 - Responsive layout, semantic HTML, keyboard focus styles, alt texts, and respect for "reduce motion"
 
 ---
@@ -62,11 +62,12 @@ To test a purchase, use Stripe's test card `4242 4242 4242 4242`, any future dat
 npm test
 ```
 
-runs 92 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
+runs 130 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
 
 - **`data.test.js`**: the prints in `supabase/02-products.sql` have unique slugs and existing images, the landing page grid has no gaps, shipping zones don't overlap.
 - **`products.test.js`**: reading prints from Supabase, lowering the stock after an order, and only refreshing the pages when an order is new.
 - **`auth.test.js`**: login form validation, the login and logout routes (wrong password, non-admin accounts, other websites), and the proxy that renews the login.
+- **`admin-products.test.js`**: the product form rules, and adding, changing and deleting prints (only for admins, never with bad data).
 - **`api.test.js`**: the checkout (server prices, stock, max 10 per print, invalid input), the thank-you page check and the Stripe webhook (signatures, unpaid orders, retries).
 
 Stripe and Supabase are replaced by fakes in the tests, so they never create payments or change the real stock.
@@ -103,8 +104,8 @@ Customer pays on Stripe  ◀─────────────────�
 │   ├── page.js             ← landing page
 │   ├── shop/               ← shop and product pages
 │   ├── cart/, success/, about/
-│   ├── admin/              ← admin page and login (only for admins)
-│   └── api/                ← checkout, products, confirm-order, stripe-webhook, admin login/logout
+│   ├── admin/              ← admin page, login and product forms (only for admins)
+│   └── api/                ← checkout, products, confirm-order, stripe-webhook, admin/…
 ├── components/             ← reusable React components (header, cart, video …)
 ├── data/
 │   ├── home.js             ← which images and videos are on the landing page
@@ -112,6 +113,7 @@ Customer pays on Stripe  ◀─────────────────�
 ├── lib/
 │   ├── products.js         ← reads the prints and stock from Supabase
 │   ├── auth.js             ← admin login with Supabase Auth
+│   ├── admin-api.js        ← shared checks for the admin routes
 │   ├── validation.js       ← form rules, shared by the browser and the server
 │   ├── orders.js           ← lowers stock after a paid order
 │   ├── limits.js           ← max prints of the same kind per order

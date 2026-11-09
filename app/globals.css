@@ -958,6 +958,103 @@ h1 {
   font-weight: 600;
 }
 
+.admin--narrow {
+  max-width: 680px;
+}
+
+.admin--narrow h1 {
+  margin-top: 8px;
+}
+
+.admin-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 40px 0 24px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.field-hint {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+.image-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: -8px;
+}
+
+.image-previews img {
+  width: 72px;
+  height: 90px;
+  object-fit: cover;
+  background: var(--tint);
+}
+
+.button--danger {
+  background: transparent;
+  color: #b00;
+  border-color: #b00;
+}
+
+.button--danger:hover:not(:disabled) {
+  background: #b00;
+  border-color: #b00;
+  color: #fff;
+}
+
+.confirm {
+  padding: 18px;
+  border: 1px solid #b00;
+  border-radius: var(--radius);
+  background: #fff5f5;
+}
+
+.confirm p {
+  margin-top: 0;
+}
+
+.notice {
+  padding: 12px 16px;
+  margin: 0 0 24px;
+  border-radius: var(--radius);
+  background: #e9f6ee;
+  border: 1px solid #2e8b57;
+  color: #1d5e3a;
+}
+
+/* Text bara för skärmläsare. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.footer-admin {
+  color: var(--ink-soft);
+}
+
 /* På mobil: tabellen kan rullas i sidled i stället för att trycka ut sidan. */
 @media (max-width: 600px) {
   .admin-table {

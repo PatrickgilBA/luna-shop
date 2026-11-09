@@ -14,8 +14,11 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 | `/success` | `app/success/page.js` | "Thank you!" after payment |
 | (wrong address) | `app/not-found.js` | "Oops! This page doesn't exist" |
 | `/admin/login` | `app/admin/login/page.js` | Sign-in form for the admin (`LoginForm.js`) |
-| `/admin` | `app/admin/page.js` | The admin page: every print with price and stock. Only for admins, everyone else is sent to `/admin/login` |
+| `/admin` | `app/admin/page.js` | The admin page: every print with price and stock, with links to add and edit. Only for admins, everyone else is sent to `/admin/login` |
+| `/admin/products/new` | `app/admin/products/new/page.js` | Form to add a print (`ProductForm.js`) |
+| `/admin/products/catsuit` (etc.) | `app/admin/products/[slug]/page.js` | Form to edit a print, and a button to delete it (`DeleteButton.js`) |
 | `/api/admin/login`, `/api/admin/logout` | `app/api/admin/…/route.js` | Not pages. Sign in and out (see [08](08-supabase.md)) |
+| `/api/admin/products`, `/api/admin/products/catsuit` | `app/api/admin/products/…/route.js` | Not pages. Add (POST), change (PATCH) and delete (DELETE) prints, only for admins |
 | `/api/checkout` | `app/api/checkout/route.js` | Not a page. The checkout, which talks to Stripe |
 | `/api/confirm-order` | `app/api/confirm-order/route.js` | Not a page. The thank-you page asks it to check the order with Stripe and lower the stock |
 | `/api/stripe-webhook` | `app/api/stripe-webhook/route.js` | Not a page. Stripe reports payments here, and the stock is lowered in Supabase |
@@ -52,6 +55,7 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 | `ProductCard.js` | A card in the shop grid (image, name, price, "Sold out") |
 | `ProductGallery.js` | Large image plus small images to click, on the product page |
 | `AddToCartButton.js` | The quantity selector (− 1 +) and the "Add to cart" button |
+| `FormField.js` | A form field with its label, hint and error message (used by the admin forms) |
 | `CartContext.js` | **The brain of the cart.** Remembers what the customer chose and shares it with every page |
 
 ## Data: the information that is shown
@@ -63,7 +67,8 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 | `lib/products.js` | Reads every print (name, price, size, images, description, stock) from Supabase (see [08](08-supabase.md)) |
 | `lib/orders.js` | Lowers the stock after a paid order |
 | `lib/auth.js` | Admin login with Supabase Auth: sign in, sign out, "is this account an admin?" |
-| `lib/validation.js` | Form rules, used both in the browser and on the server |
+| `lib/validation.js` | Form rules (login and prints), used both in the browser and on the server |
+| `lib/admin-api.js` | Shared checks for the admin routes: same website, signed-in admin |
 | `proxy.js` | Runs before the admin pages and renews the login when it has expired |
 | `lib/limits.js` | Max number of the same print per order (10) |
 | `lib/shipping.js` | Shipping zones, prices and countries |

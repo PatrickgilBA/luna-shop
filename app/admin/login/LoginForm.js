@@ -3,9 +3,10 @@
 // (lib/validation.js), skickar dem till /api/admin/login med fetch och
 // visar svaret utan att sidan laddas om.
 
-import { cloneElement, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { validateLogin } from "@/lib/validation";
+import FormField from "@/components/FormField";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -53,25 +54,23 @@ export default function LoginForm() {
 
   return (
     <form className="form" onSubmit={handleSubmit} noValidate>
-      <Field label="Email" error={errors.email} id="email">
+      <FormField label="Email" id="email" error={errors.email}>
         <input
-          id="email"
           type="email"
           autoComplete="username"
           value={form.email}
           onChange={(e) => update("email", e.target.value)}
         />
-      </Field>
+      </FormField>
 
-      <Field label="Password" error={errors.password} id="password">
+      <FormField label="Password" id="password" error={errors.password}>
         <input
-          id="password"
           type="password"
           autoComplete="current-password"
           value={form.password}
           onChange={(e) => update("password", e.target.value)}
         />
-      </Field>
+      </FormField>
 
       {message && (
         <p className="error" role="alert">
@@ -83,25 +82,5 @@ export default function LoginForm() {
         {sending ? "Signing in…" : "Sign in"}
       </button>
     </form>
-  );
-}
-
-// Ett fält med etikett och felmeddelande. aria-invalid och aria-describedby
-// gör att skärmläsare läser upp felet.
-function Field({ label, error, id, children }) {
-  const errorId = `${id}-error`;
-  return (
-    <div className={error ? "field field--error" : "field"}>
-      <label htmlFor={id}>{label}</label>
-      {cloneElement(children, {
-        "aria-invalid": Boolean(error),
-        "aria-describedby": error ? errorId : undefined,
-      })}
-      {error && (
-        <p className="field-error" id={errorId}>
-          {error}
-        </p>
-      )}
-    </div>
   );
 }
