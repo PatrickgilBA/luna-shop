@@ -1,50 +1,43 @@
 # 4. Editing prints and prices
 
-Every print (name, price, size, description, images and stock) is stored in the **`products` table in Supabase**, not in the code. You change them there, and the site updates by itself within a minute. No publishing needed.
+Every print (name, price, size, description, images and stock) is stored in the **`products` table in Supabase**. The easiest way to change them is the **admin page** on the site. Changes show in the shop right away. No publishing needed.
 
 *(Until 9 November 2026 the prints were in `data/products.js`. That file is gone.)*
 
-## Open the table
-1. Sign in at [supabase.com](https://supabase.com/dashboard) and open the project.
-2. Click **Table Editor** (the grid icon in the left menu) → **products**.
+## Sign in
+1. Go to **https://luna-shop-ten.vercel.app/admin**, or click **Admin** at the very bottom of any page.
+2. Sign in with the admin email and password. You stay signed in for up to 30 days on that browser.
 
-Each row is one print:
+You see every print with its price and stock.
 
-| Column | What it is | Example |
-|---|---|---|
-| `slug` | Short id used in the web address, `/shop/catsuit`. Only lowercase letters, numbers and hyphens. Must be unique | `catsuit` |
-| `title` | The name shown on the site | `Catsuit` |
-| `size` | The size shown on the site | `A4 (21 × 29.7 cm)` |
-| `price` | Price in euro | `30` |
-| `description` | A short text about the print | `A very cool cat …` |
-| `images` | The images, as a list. The first one is shown in the shop grid | `{/images/products/catsuit-1.jpg,/images/products/catsuit-2.jpg}` |
-| `stock` | How many are left. `0` = "Sold out" | `10` |
-| `sort_order` | Order in the shop, lowest first | `10` |
+## Change a print
+1. Click **Edit** on its row.
+2. Change the name, price, stock, size, description, images or order.
+3. Click **Save changes**. You're taken back to the list, with a green "Saved" message.
 
-The database refuses values that would break the shop: an empty name, a price of 0 or less, negative stock, or a slug with spaces or capital letters.
+The form checks every field when you leave it, and again when you save. A field with a problem turns red and says what is wrong, for example *"The price must be more than 0."* The server checks everything once more, so the rules can't be skipped.
 
-## Change price, name, size, description or stock
-Double-click the cell, type the new value and press Enter. It shows on the site within **one minute**.
+- **Price**: in euro, `30` or `30.50` (a comma works too).
+- **Stock**: how many are left. `0` shows "Sold out". It also goes down automatically after each purchase.
+- **Images**: one address per line. The first one is shown in the shop grid.
+- **Order in the shop**: lowest number first. The prints go up in steps of 10, so `15` puts a print between 10 and 20.
 
-The stock goes down automatically after each purchase, so you only change it by hand after restocking, or to mark a print as sold out (`0`).
+The **slug** (the address, `/shop/catsuit`) can't be changed, because it is in links and in customers' carts.
 
-## Change the order in the shop
-Change `sort_order`. Prints are shown from the lowest number to the highest. The numbers go up in steps of 10 (10, 20, 30 …), so you can put a print in between, for example `15`.
+## Add a print
+1. **Put the image on the site** (until image upload is added):
+   - Make it at most about 1600 pixels on the longest side, as a `.jpg`. On a Mac: open it in Preview → Tools → Adjust Size.
+   - Put it in `public/images/products/`, with only lowercase letters, numbers and hyphens in the file name, and publish it (commit, push and merge, see [06](06-publishing.md)).
+2. On the admin page, click **+ Add a print**.
+3. Fill in the form. The slug is filled in from the name; change it if you like.
+4. In **Images**, write the image's address, for example `/images/products/new-name-1.jpg`. A small preview shows if the address is right.
+5. Click **Add print**. It shows in the shop right away, at `/shop/new-name`.
 
-## Add a new print
-1. **Prepare the image.** It should be at most about 1600 pixels on the longest side, and a `.jpg`. On a Mac: open the image in Preview → Tools → Adjust Size. Or in Terminal:
-   ```
-   sips -Z 1600 "path/to/image.jpg" --out public/images/products/new-name-1.jpg
-   ```
-2. **Put the image** in `public/images/products/` and publish it (commit, push and merge, see [06](06-publishing.md)). Use only lowercase letters, numbers and hyphens in the file name.
-3. In Supabase: **products → Insert → Insert row**. Fill in `slug`, `title`, `size`, `price`, `description`, `images` (for example `{/images/products/new-name-1.jpg}`) and `stock`. Click **Save**.
+## Delete a print
+Click **Edit** on its row, then **Delete this print** at the bottom, and confirm. It disappears from the shop right away. If someone has it in their cart, it is removed from the cart.
 
-The new print shows in the shop within a minute, and gets its own page at `/shop/new-name`.
-
-*Coming soon: forms on the admin page (`/admin`) for this, including image upload. Today the admin page shows every print with its price and stock.*
-
-## Remove a print
-Right-click the row → **Delete row**. It disappears from the shop within a minute. If someone has it in their cart, it is removed from the cart.
+## In Supabase instead
+Everything above can also be done in Supabase: **Table Editor → products**. Double-click a cell to change it, **Insert → Insert row** to add, right-click → **Delete row** to delete. The same database rules apply (no empty names, no price of 0 or less, no negative stock).
 
 ## Check the placeholders
 When the site was built, only three prints had a real name, price and size (Catsuit, Greetings Friends and Protector). The other 21 names, sizes and prices were guessed from the images. **Luna needs to check them in the table.**

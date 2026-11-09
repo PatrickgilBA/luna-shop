@@ -1,5 +1,6 @@
 // Sidfoten längst ner på varje sida.
 
+import Link from "next/link";
 import site from "@/data/site";
 
 export default function Footer() {
@@ -15,6 +16,10 @@ export default function Footer() {
       <p>Shipping worldwide · Secure payment with Stripe</p>
       <p>
         © {new Date().getFullYear()} {site.name}
+        {" · "}
+        <Link href="/admin" className="footer-admin">
+          Admin
+        </Link>
       </p>
     </footer>
   );

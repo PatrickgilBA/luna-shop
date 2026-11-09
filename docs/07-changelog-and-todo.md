@@ -2,6 +2,18 @@
 
 ## Changelog
 
+### 9 November 2026 – add, edit and delete prints from the admin page
+- The admin page has **+ Add a print** and an **Edit** link on every row. The edit page also has **Delete this print**, which asks before deleting.
+- New routes `/api/admin/products` (POST: add) and `/api/admin/products/[slug]` (PATCH: change, DELETE: delete). They only accept a signed-in admin and requests from our own website, and they call Supabase with the admin's own login, so the database's rules (`is_admin()`) decide too.
+- The form (`app/admin/products/ProductForm.js`) checks each field when you leave it and again when you save, with the same rules as the server (`validateProduct` in `lib/validation.js`): name, size, price > 0 with at most two decimals, whole-number stock ≥ 0, 1–10 images starting with `/images/` or `https://`, and a valid unique slug. The slug is filled in from the name, and can't be changed later.
+- After a change the shop is refreshed at once.
+- A small **Admin** link was added to the footer. Shared form field component: `components/FormField.js`.
+- **Tested:**
+  - In a real browser with a temporary admin account: empty and bad fields show the right messages; a new test print was saved, showed in the shop at €12.50; the same slug was refused; changing it to €13 and stock 0 showed "Sold out"; deleting asked first, then the page gave 404. The test print and account were deleted afterwards.
+  - The routes refuse visitors who aren't signed in (401).
+  - Bugs found and fixed while testing: an empty "order" field was refused, a price like €0.29 would have been refused because of how computers store decimals, the order number wasn't read from the database, and an old slug error stayed after the slug was filled in.
+  - 130 automatic tests pass (38 new); `npm run build` passes.
+
 ### 9 November 2026 – admin login
 - An admin account (pgil@itba.edu.ar) was created in Supabase Auth, and public sign-ups were turned off.
 - New table `admins`, function `is_admin()` and Row Level Security rules: only admins may add, change and delete prints (`supabase/03-admin.sql`).
@@ -109,6 +121,7 @@
 ## To-do
 
 ### Must be done before the shop opens
+- [ ] Use a stronger admin password (the current one is short and easy to guess).
 - [ ] Check the names, sizes and prices of the 21 guessed prints in Supabase ([04](04-editing-products.md)).
 - [x] Upgrade Next.js to 16.4.5 or later (security holes in 16.4.0).
 - [x] Add the Supabase keys in Vercel.
