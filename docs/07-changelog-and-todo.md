@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 9 November 2026 – automatic tests and CI
+- 97 automatic tests with Vitest in `tests/` (run with `npm test`): the shop data and landing page grid, the stock in Supabase, the checkout, the thank-you page check and the Stripe webhook. Stripe and Supabase are replaced by fakes in the tests.
+- To check that the tests really catch mistakes, the stock check and the 10-per-print limit were broken on purpose: three tests failed, as they should. Then the code was restored.
+- GitHub Actions (`.github/workflows/ci.yml`) installs, tests and builds the site on every pull request and push to `main`. The build needs the Supabase URL and publishable key, stored as repository secrets.
+
 ### 9 November 2026 – live on Vercel
 - Next.js was upgraded from 16.4.0 to 16.4.5 to fix three known security holes (pull request #1). `npm audit` reports 0 vulnerabilities.
 - The GitHub repository was connected to Vercel, with the keys from `.env.local` as environment variables. The site is live at https://luna-shop-ten.vercel.app

@@ -55,6 +55,24 @@ To test a purchase, use Stripe's test card `4242 4242 4242 4242`, any future dat
 
 ---
 
+## Tests and CI
+
+```
+npm test
+```
+
+runs 97 automatic tests with [Vitest](https://vitest.dev) (in [`tests/`](tests/)):
+
+- **`data.test.js`**: every print has its fields and existing images, slugs are unique, the landing page grid has no gaps, shipping zones don't overlap.
+- **`inventory.test.js`**: reading stock from Supabase, lowering it after an order, and only refreshing the pages when an order is new.
+- **`api.test.js`**: the checkout (server prices, stock, max 10 per print, invalid input), the thank-you page check and the Stripe webhook (signatures, unpaid orders, retries).
+
+Stripe and Supabase are replaced by fakes in the tests, so they never create payments or change the real stock.
+
+**GitHub Actions** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) installs, tests and builds the site on every pull request and every push to `main`. **Vercel** builds a preview for every pull request and publishes `main` to the live site.
+
+---
+
 ## How a purchase works
 
 ```
@@ -96,6 +114,8 @@ Customer pays on Stripe  ◀─────────────────�
 │   ├── shipping.js         ← shipping zones and prices
 │   └── format.js           ← price formatting
 ├── supabase/setup.sql      ← database tables, security rules and function
+├── tests/                  ← automatic tests (npm test)
+├── .github/workflows/      ← CI: tests and build on every pull request
 ├── public/                 ← images and videos shown on the site
 └── docs/                   ← detailed documentation
 ```
