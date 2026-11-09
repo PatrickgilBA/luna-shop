@@ -13,6 +13,9 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 | `/cart` | `app/cart/page.js` | The cart, shipping choice and "Checkout" |
 | `/success` | `app/success/page.js` | "Thank you!" after payment |
 | (wrong address) | `app/not-found.js` | "Oops! This page doesn't exist" |
+| `/admin/login` | `app/admin/login/page.js` | Sign-in form for the admin (`LoginForm.js`) |
+| `/admin` | `app/admin/page.js` | The admin page: every print with price and stock. Only for admins, everyone else is sent to `/admin/login` |
+| `/api/admin/login`, `/api/admin/logout` | `app/api/admin/…/route.js` | Not pages. Sign in and out (see [08](08-supabase.md)) |
 | `/api/checkout` | `app/api/checkout/route.js` | Not a page. The checkout, which talks to Stripe |
 | `/api/confirm-order` | `app/api/confirm-order/route.js` | Not a page. The thank-you page asks it to check the order with Stripe and lower the stock |
 | `/api/stripe-webhook` | `app/api/stripe-webhook/route.js` | Not a page. Stripe reports payments here, and the stock is lowered in Supabase |
@@ -59,6 +62,9 @@ In Next.js, **folders in `app/`** decide which addresses exist. The file called 
 | `data/home.js` | Which images and videos are in the landing page grid, and how big they are (small/big/tall/wide) |
 | `lib/products.js` | Reads every print (name, price, size, images, description, stock) from Supabase (see [08](08-supabase.md)) |
 | `lib/orders.js` | Lowers the stock after a paid order |
+| `lib/auth.js` | Admin login with Supabase Auth: sign in, sign out, "is this account an admin?" |
+| `lib/validation.js` | Form rules, used both in the browser and on the server |
+| `proxy.js` | Runs before the admin pages and renews the login when it has expired |
 | `lib/limits.js` | Max number of the same print per order (10) |
 | `lib/shipping.js` | Shipping zones, prices and countries |
 | `lib/format.js` | Turns 30 into "€30.00" |

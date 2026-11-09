@@ -10,6 +10,7 @@ How to change prints, prices and stock by hand: see [04-editing-products.md](04-
 |---|---|
 | **products** | One row per print: slug, title, size, price, description, images, stock, sort order |
 | **processed_orders** | Which Stripe orders have already lowered the stock. It only exists so the same order is never counted twice. Don't touch it |
+| **admins** | Which Supabase Auth accounts are admins. Only they may add, change or delete prints |
 | **inventory** | Not a real table but a *view*: a read-only mirror of `slug` and `stock` from products. Kept so older versions of the site keep working |
 
 The SQL that created them is in [`supabase/`](../supabase/):
@@ -18,6 +19,7 @@ The SQL that created them is in [`supabase/`](../supabase/):
 |---|---|---|
 | `01-setup.sql` | 9 Nov 2026 | The first stock table, `processed_orders` and the `process_order` function |
 | `02-products.sql` | 9 Nov 2026 | The `products` table with the 24 prints; stock moved into it |
+| `03-admin.sql` | 9 Nov 2026 | The `admins` table, the `is_admin()` function, and rules that let admins change products |
 
 Run them in that order, once, in **SQL Editor → Run**, to set up a new Supabase project. Never run them again in the same project.
 
@@ -25,9 +27,29 @@ Run them in that order, once, in **SQL Editor → Run**, to set up a new Supabas
 
 Row Level Security is on for every table:
 - **Everyone may read** `products` (it is the shop, after all).
-- **Nobody may change** anything with the public key. Supabase refuses with "violates row-level security policy". This was tested.
+- **Nobody may change** anything with the public key, or as a signed-in account that isn't an admin. Supabase refuses with "violates row-level security policy". This was tested.
+- **Admins** (accounts in the `admins` table) may add, change and delete prints. Nobody can add themselves to the list.
 - Only the server, with the **secret key**, may run `process_order`, which lowers the stock.
 - The database refuses impossible values: empty names, prices of 0 or less, negative stock, and slugs with spaces or capital letters.
+
+## Admin accounts
+
+The admin signs in at **/admin/login** with an email and password. The accounts are kept by **Supabase Auth** (Authentication → Users), not in our tables.
+
+- **Sign-ups are turned off** (Authentication → Sign In / Providers → *Allow new users to sign up*). Nobody can create an account from the outside; Supabase answers "Signups not allowed".
+- Being signed in isn't enough: the account must also be in the `admins` table. The site asks the database (`is_admin()`) on every visit to `/admin`.
+- The login is kept in two cookies that the page's JavaScript can't read (httpOnly). It lasts about an hour and is then renewed automatically by `proxy.js`, for up to 30 days.
+
+### Add another admin
+1. **Authentication → Users → Add user → Create new user**. Enter the email and a password, keep *Auto Confirm User* ticked.
+2. In **SQL Editor**, run (with the right email):
+   ```sql
+   insert into public.admins (user_id)
+   select id from auth.users where email = 'new-admin@example.com';
+   ```
+
+### Remove an admin
+Delete the account under **Authentication → Users**. It disappears from `admins` automatically.
 
 ## How a purchase lowers the stock
 
