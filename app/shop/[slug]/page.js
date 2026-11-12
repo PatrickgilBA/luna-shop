@@ -12,6 +12,8 @@ import { SHIPPING_ZONES } from "@/lib/shipping";
 import { getProducts, getProduct } from "@/lib/products";
 import ProductGallery from "@/components/ProductGallery";
 import AddToCartButton from "@/components/AddToCartButton";
+import ProductCard from "@/components/ProductCard";
+import { pickRelated } from "@/lib/related";
 
 // Tells Next.js which product pages exist, so they can be built in advance (faster).
 // New prints added later are built the first time someone visits them.
@@ -34,40 +36,55 @@ export async function generateMetadata({ params }) {
 
 export default async function ProductPage({ params }) {
   const { slug } = await params;
-  const product = await getProduct(slug); // from Supabase, with the stock
+  // From Supabase, with the stock. All prints too, for "You may also like".
+  const [product, products] = await Promise.all([getProduct(slug), getProducts()]);
   if (!product) notFound(); // Shows the 404 page if the print doesn't exist.
+  const related = pickRelated(products, slug);
 
   return (
-    <article className="product">
-      <ProductGallery images={product.images} title={product.title} />
+    <>
+      <article className="product">
+        <ProductGallery images={product.images} title={product.title} />
 
-      <div className="product-info">
-        <Link href="/shop" className="small-link">
-          ← Back to shop
-        </Link>
-        <h1>{product.title}</h1>
-        <p className="price">{formatPrice(product.price)}</p>
-        <p>{product.description}</p>
+        <div className="product-info">
+          <Link href="/shop" className="small-link">
+            ← Back to shop
+          </Link>
+          <h1>{product.title}</h1>
+          <p className="price">{formatPrice(product.price)}</p>
+          <p>{product.description}</p>
 
-        <dl className="details">
-          <dt>Size</dt>
-          <dd>{product.size}</dd>
-          <dt>Technique</dt>
-          <dd>Risograph print</dd>
-          <dt>Shipping</dt>
-          <dd>
-            EU {formatPrice(SHIPPING_ZONES.eu.price)} · Worldwide{" "}
-            {formatPrice(SHIPPING_ZONES.world.price)}
-          </dd>
-        </dl>
+          <dl className="details">
+            <dt>Size</dt>
+            <dd>{product.size}</dd>
+            <dt>Technique</dt>
+            <dd>Risograph print</dd>
+            <dt>Shipping</dt>
+            <dd>
+              EU {formatPrice(SHIPPING_ZONES.eu.price)} · Worldwide{" "}
+              {formatPrice(SHIPPING_ZONES.world.price)}
+            </dd>
+          </dl>
 
-        <AddToCartButton product={product} />
+          <AddToCartButton product={product} />
 
-        <p className="note">
-          Every riso print is printed by hand, layer by layer, so small variations in colour
-          and texture are part of the charm. Frame not included.
-        </p>
-      </div>
-    </article>
+          <p className="note">
+            Every riso print is printed by hand, layer by layer, so small variations in colour
+            and texture are part of the charm. Frame not included.
+          </p>
+        </div>
+      </article>
+
+      {related.length > 0 && (
+        <section className="related" aria-labelledby="related-title">
+          <h2 id="related-title">You may also like</h2>
+          <div className="grid">
+            {related.map((other) => (
+              <ProductCard key={other.slug} product={other} />
+            ))}
+          </div>
+        </section>
+      )}
+    </>
   );
 }
