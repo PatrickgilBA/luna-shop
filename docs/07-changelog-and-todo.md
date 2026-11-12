@@ -2,6 +2,11 @@
 
 ## Changelog
 
+### 12 November 2026 – "You may also like"
+- Every product page now ends with a **You may also like** row of four other prints, using the same cards as the shop.
+- `lib/related.js` picks the prints that come after the current one in the shop's order (starting over at the top), so each page shows different neighbours. Prints in stock come first; sold-out ones only fill up the row. Four columns on a computer, two on a phone.
+- **Tested:** 148 automatic tests pass (5 new in `tests/related.test.js`); `npm run build` passes; checked in the browser on `/shop/catsuit`.
+
 ### 9 November 2026 – code comments in English
 - Every comment in the code (`app/`, `components/`, `lib/`, `data/`, `proxy.js`, `next.config.mjs`, `app/globals.css`, `supabase/01-setup.sql`, `.gitignore`) was translated from Swedish to English, so the whole project – code, docs and README – is in English.
 - Only comments changed: a check of the diff confirmed that no line of code differs. The one Swedish word left is the name of a database rule (`"Alla får läsa lagret"` in `01-setup.sql`), which has to match the name in Supabase; an English explanation was added next to it.
