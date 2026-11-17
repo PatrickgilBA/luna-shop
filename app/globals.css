@@ -126,6 +126,16 @@ h1 {
   text-decoration: none;
   padding: 4px 0;
   border-bottom: 1.5px solid transparent;
+  white-space: nowrap; /* "Cart 0" stays on one line */
+}
+
+/* Small phones: four menu links need a little less space. */
+@media (max-width: 420px) {
+  .nav {
+    gap: 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+  }
 }
 
 .nav a:hover,
@@ -188,6 +198,11 @@ h1 {
   font-size: clamp(3.5rem, 11vw, 9.5rem);
   line-height: 0.85;
   letter-spacing: -0.03em;
+}
+
+/* A longer word than "Luna" (the Inspiration page) must fit on a phone. */
+.intro-name--long {
+  font-size: clamp(2.2rem, 10.5vw, 9.5rem);
 }
 
 .intro-side {
@@ -1160,6 +1175,80 @@ h1 {
   }
 }
 
+/* ---------- Inspiration: the tiles are buttons that open full screen ---------- */
+
+button.tile {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  cursor: zoom-in;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(20, 20, 20, 0.94);
+  color: #fff;
+  cursor: zoom-out;
+}
+.lightbox::backdrop {
+  background: rgba(20, 20, 20, 0.94);
+}
+.lightbox .lightbox-image {
+  object-fit: contain;
+  padding: clamp(48px, 6vw, 72px) clamp(8px, 7vw, 96px);
+}
+.lightbox button {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.lightbox button:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+.lightbox-close {
+  top: 12px;
+  right: 12px;
+}
+.lightbox-prev,
+.lightbox-next {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.lightbox-prev {
+  left: 12px;
+}
+.lightbox-next {
+  right: 12px;
+}
+.lightbox-count {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
 /* ---------- Simple message pages (empty cart, thank you, 404) ---------- */
 
 .message-page {
@@ -1188,4 +1277,9 @@ h1 {
 
 .footer a:hover {
   color: var(--blue);
+}
+
+/* No page scrolling behind the full-screen image. */
+body:has(.lightbox[open]) {
+  overflow: hidden;
 }
