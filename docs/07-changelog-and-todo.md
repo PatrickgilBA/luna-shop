@@ -2,6 +2,13 @@
 
 ## Changelog
 
+### 17 November 2026 – Inspiration page
+- New page **/inspiration**, with an **Inspiration** link in the menu: 11 photos of Luna's prints in real rooms, in the same tile grid as the landing page (big, tall and small tiles).
+- The images are listed in `data/inspiration.js`, each with a description for screen readers. Smaller copies (at most 1800 px) are in `public/images/inspiration/`; the originals in `Inspo Luna/` stay out of git.
+- Clicking an image opens it **full screen** (`components/InspirationGallery.js`, using the browser's own `<dialog>`): ← and → (buttons or arrow keys) switch images, and ×, Esc or a click on the image closes it.
+- On small phones the menu is a little tighter so all four links fit on one line, and the long heading is smaller so it isn't cut off.
+- **Tested:** 152 automatic tests pass (the grid checks now cover both pages); `npm run build` passes; checked on a computer and at phone width; the full-screen view was clicked through in a real browser (open, next image, Esc, click to close).
+
 ### 12 November 2026 – "You may also like"
 - Every product page now ends with a **You may also like** row of four other prints, using the same cards as the shop.
 - `lib/related.js` picks the prints that come after the current one in the shop's order (starting over at the top), so each page shows different neighbours. Prints in stock come first; sold-out ones only fill up the row. Four columns on a computer, two on a phone.

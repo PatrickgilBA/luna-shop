@@ -5,6 +5,7 @@ import { describe, it, expect } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import tiles from "@/data/home";
+import inspiration from "@/data/inspiration";
 import site from "@/data/site";
 import { SHIPPING_ZONES } from "@/lib/shipping";
 import { MAX_PER_PRINT } from "@/lib/limits";
@@ -37,26 +38,32 @@ describe("products in supabase/02-products.sql", () => {
   });
 });
 
-describe("landing page grid", () => {
-  const CELLS = { small: 1, tall: 2, wide: 2, big: 4 };
+const CELLS = { small: 1, tall: 2, wide: 2, big: 4 };
 
+describe.each([
+  ["landing page", tiles],
+  ["inspiration page", inspiration],
+])("%s grid", (_, grid) => {
   it("only uses known tile sizes", () => {
-    for (const tile of tiles) expect(Object.keys(CELLS)).toContain(tile.size);
+    for (const tile of grid) expect(Object.keys(CELLS)).toContain(tile.size);
   });
 
   it("fills whole rows of 4 (no gaps on desktop)", () => {
-    const cells = tiles.reduce((sum, tile) => sum + CELLS[tile.size], 0);
+    const cells = grid.reduce((sum, tile) => sum + CELLS[tile.size], 0);
     expect(cells % 4).toBe(0);
   });
 
   it("has an image or a video for every tile, and the files exist", () => {
-    for (const tile of tiles) {
+    for (const tile of grid) {
       const media = tile.image || tile.video;
       expect(media, JSON.stringify(tile)).toBeTruthy();
       expect(existsSync(publicFile(media)), media).toBe(true);
       if (tile.video) expect(existsSync(publicFile(tile.poster)), tile.poster).toBe(true);
     }
   });
+});
+
+describe("landing page grid", () => {
 
   it("links every tile to a real print, or has its own caption", () => {
     for (const tile of tiles) {
@@ -101,5 +108,11 @@ describe("small helpers", () => {
 
   it("limits each print to 10 per order", () => {
     expect(MAX_PER_PRINT).toBe(10);
+  });
+});
+
+describe("inspiration page", () => {
+  it("describes every image for screen readers", () => {
+    for (const tile of inspiration) expect(tile.alt, tile.image).toBeTruthy();
   });
 });
